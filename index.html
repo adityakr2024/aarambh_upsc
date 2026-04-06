@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aarambh Times | UPSC Dashboard</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:'Segoe UI',system-ui,sans-serif; background:#f4f6f8; color:#333; }
+    .navbar { background:#1a73e8; color:white; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; }
+    .logo { font-size:24px; font-weight:700; }
+    .card { background:white; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:24px; margin-bottom:20px; }
+    .btn { background:#1a73e8; color:white; padding:14px 24px; border:none; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:16px; }
+    .btn-outline { background:transparent; border:2px solid #1a73e8; color:#1a73e8; }
+    .email-badge { background:#e8f0fe; color:#1967d2; padding:6px 14px; border-radius:9999px; font-size:14px; }
+    .locked { opacity:0.6; pointer-events:none; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">Aarambh Times <span style="font-size:18px;">UPSC</span></div>
+  <div id="user-info" style="display:none; align-items:center; gap:12px;">
+    <div id="user-name" style="font-weight:600;"></div>
+    <div id="user-email" class="email-badge"></div>
+    <button onclick="signOut()" class="btn" style="padding:8px 16px; font-size:14px; width:auto;">Sign Out</button>
+  </div>
+</nav>
+
+<div style="max-width:620px; margin:30px auto; padding:0 20px;">
+
+  <div id="screen-signin" class="card">
+    <h2 style="text-align:center;">Welcome to UPSC Dashboard</h2>
+    <p style="text-align:center; color:#555;">Sign in with Google to access your mock tests</p>
+    <div id="g_id_signin" style="margin:30px auto; width:240px;"></div>
+  </div>
+
+  <div id="screen-loading" class="card" style="display:none; text-align:center;">
+    <h3>Verifying your account...</h3>
+  </div>
+
+  <div id="screen-dashboard" style="display:none;">
+    <div class="card">
+      <h3 id="welcome-name"></h3>
+      <div id="course-list"></div>
+    </div>
+    <div style="text-align:center; margin-top:30px; color:#666; font-size:13px;">
+      Need help? WhatsApp <strong>+91 9761241743</strong><br>
+      <a href="https://www.aarambhtimes.in/" target="_blank">← Back to Aarambh Times</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// === CONFIG - REPLACE THESE THREE URLs AFTER DEPLOYING EACH GAS PROJECT ===
+const DASHBOARD_GAS = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmPY2MYqbEjZvBmw4UpTIkiCCOSwDUoGGdjqFVHzvVrLDR_j3KjgbaQ/exec";
+const REGISTRATION_GAS = "https://script.google.com/macros/s/YOUR_REGISTRATION_DEPLOYMENT_ID/exec"; // not used in frontend yet
+const QUIZ_GAS = "https://script.google.com/macros/s/YOUR_QUIZ_ENGINE_DEPLOYMENT_ID/exec";
+
+function initializeGoogleSignIn() {
+  google.accounts.id.initialize({
+    client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",   // ← Create in Google Cloud Console
+    callback: handleCredentialResponse
+  });
+  google.accounts.id.renderButton(
+    document.getElementById("g_id_signin"),
+    { theme: "outline", size: "large", width: 240 }
+  );
+}
+
+async function handleCredentialResponse(response) {
+  document.getElementById("screen-signin").style.display = "none";
+  document.getElementById("screen-loading").style.display = "block";
+
+  const idToken = response.credential;
+
+  const res = await fetch(`${DASHBOARD_GAS}?action=verifyLogin&idToken=${idToken}`);
+  const data = await res.json();
+
+  document.getElementById("screen-loading").style.display = "none";
+
+  if (data.status === "success") {
+    document.getElementById("screen-dashboard").style.display = "block";
+    document.getElementById("user-info").style.display = "flex";
+    document.getElementById("welcome-name").innerHTML = `Welcome, <strong>${data.userName}</strong>`;
+    document.getElementById("user-email").innerText = data.userEmail;
+    renderProducts(data.products);
+  } else if (data.status === "not_registered") {
+    alert("You are not registered yet. Redirecting to registration form...");
+    window.location.href = data.regForm;
+  } else {
+    alert("Login failed: " + (data.message || "Please try again"));
+    location.reload();
+  }
+}
+
+function renderProducts(products) {
+  const list = document.getElementById("course-list");
+  list.innerHTML = "";
+  if (products.length === 0) {
+    list.innerHTML = `<div class="card"><h4>No products yet</h4><p>Free quiz appears within minutes of registration.</p></div>`;
+    return;
+  }
+  products.forEach(p => {
+    const div = document.createElement("div");
+    div.className = `card ${p.isLocked ? "locked" : ""}`;
+    div.innerHTML = `
+      <div style="color:#137333; font-weight:bold; font-size:13px;">${p.id.includes("FREE") ? "FREE" : "PREMIUM"}</div>
+      <h4>${p.name}</h4>
+      <p>${p.totalTests} Mock Tests Available</p>
+      ${p.isLocked 
+        ? `<div style="color:red; font-weight:bold;">Payment Pending Verification (24-48 hrs)</div>` 
+        : `<button class="btn" onclick="startTest('${p.id}')">Start Mock Tests →</button>`}
+    `;
+    list.appendChild(div);
+  });
+}
+
+function startTest(productId) {
+  // TODO: Full quiz UI will be added in next update
+  alert(`🚀 Opening ${productId} quiz portal\n\n(Full quiz interface coming in next step)`);
+}
+
+function signOut() {
+  google.accounts.id.disableAutoSelect();
+  location.reload();
+}
+
+window.onload = initializeGoogleSignIn;
+</script>
+</body>
+</html>
