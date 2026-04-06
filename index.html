@@ -475,6 +475,9 @@ function renderDashboard(user, attempts) {
   // Welcome banner
   document.getElementById('dash-name').textContent = user.userName;
   document.getElementById('dash-email').textContent = user.userEmail;
+  // Inside renderDashboard(user, attempts) in index.html, add this line:
+  localStorage.setItem('aarambh_user_email', user.userEmail);
+  localStorage.setItem('aarambh_user_name', user.userName);
 
   var tierBadge = document.getElementById('dash-tier-badge');
   tierBadge.textContent = user.tier || 'Freemium';
