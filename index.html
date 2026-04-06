@@ -118,8 +118,7 @@ function renderProducts(products) {
 }
 
 function startTest(productId) {
-  // TODO: Full quiz UI will be added in next update
-  alert(`🚀 Opening ${productId} quiz portal\n\n(Full quiz interface coming in next step)`);
+  window.location.href = `quiz.html?productId=${productId}&testNumber=1`;
 }
 
 function signOut() {
