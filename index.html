@@ -412,7 +412,7 @@ function triggerGoogleSignIn() {
     return;
   }
   google.accounts.id.prompt(function(notification) {
-    if (notification.isSkippedMoment() || notification.isDismissedMoment()) {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment() || notification.isDismissedMoment()) {
       // One Tap was dismissed — use popup flow as fallback
       google.accounts.id.renderButton(
         document.createElement('div'),
