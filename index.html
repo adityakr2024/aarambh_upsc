@@ -1,132 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aarambh Times | UPSC Dashboard</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <style>
-    * { box-sizing: border-box; }
-    body { margin:0; font-family:'Segoe UI',system-ui,sans-serif; background:#f4f6f8; color:#333; }
-    .navbar { background:#1a73e8; color:white; padding:15px 20px; display:flex; align-items:center; justify-content:space-between; }
-    .logo { font-size:24px; font-weight:700; }
-    .card { background:white; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); padding:24px; margin-bottom:20px; }
-    .btn { background:#1a73e8; color:white; padding:14px 24px; border:none; border-radius:8px; font-weight:600; cursor:pointer; width:100%; font-size:16px; }
-    .btn-outline { background:transparent; border:2px solid #1a73e8; color:#1a73e8; }
-    .email-badge { background:#e8f0fe; color:#1967d2; padding:6px 14px; border-radius:9999px; font-size:14px; }
-    .locked { opacity:0.6; pointer-events:none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aarambh Times UPSC - हिंदी माध्यम Free UPSC Prelims Paper 1 Quiz + Mini Test Series">
+    <title>Aarambh Times UPSC | Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+        
+        :root {
+            --primary: #1e40af;
+        }
+        
+        * { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f3f4f6; color: #1f2937; }
+        .heading-font { font-family: 'Playfair Display', serif; }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #1e40af 0%, #0f2a7a 100%);
+        }
+
+        .whatsapp-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-<nav class="navbar">
-  <div class="logo">Aarambh Times <span style="font-size:18px;">UPSC</span></div>
-  <div id="user-info" style="display:none; align-items:center; gap:12px;">
-    <div id="user-name" style="font-weight:600;"></div>
-    <div id="user-email" class="email-badge"></div>
-    <button onclick="signOut()" class="btn" style="padding:8px 16px; font-size:14px; width:auto;">Sign Out</button>
-  </div>
-</nav>
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="text-2xl font-bold text-blue-800 heading-font">Aarambh Times</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded">UPSC</span>
+                </div>
+                
+                <div id="user-info" class="hidden items-center gap-4">
+                    <div class="hidden md:block text-right">
+                        <div id="user-name" class="text-sm font-semibold text-gray-900"></div>
+                        <div id="user-email" class="text-xs text-gray-500"></div>
+                    </div>
+                    <button onclick="signOut()" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg border border-gray-300">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<div style="max-width:620px; margin:30px auto; padding:0 20px;">
+    <main class="flex-grow flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
 
-  <div id="screen-signin" class="card">
-    <h2 style="text-align:center;">Welcome to UPSC Dashboard</h2>
-    <p style="text-align:center; color:#555;">Sign in with Google to access your mock tests</p>
-    <div id="g_id_signin" style="margin:30px auto; width:240px;"></div>
-  </div>
+        <div id="screen-signin" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="hero-bg px-6 py-8 text-center text-white">
+                <h2 class="text-3xl font-bold heading-font mb-2">Welcome Aspirant</h2>
+                <p class="text-blue-100 text-sm">Access your UPSC Prelims Mock Tests</p>
+            </div>
+            <div class="p-8 text-center">
+                <p class="text-gray-600 mb-6">Please sign in with your registered Google account to continue to your dashboard.</p>
+                <div class="flex justify-center mb-4">
+                    <div id="g_id_signin"></div>
+                </div>
+                <div class="text-xs text-gray-400 mt-6">
+                    Not registered yet? <a href="https://www.aarambhtimes.in/" class="text-blue-600 hover:underline">Visit Main Website</a>
+                </div>
+            </div>
+        </div>
 
-  <div id="screen-loading" class="card" style="display:none; text-align:center;">
-    <h3>Verifying your account...</h3>
-  </div>
+        <div id="screen-loading" class="hidden max-w-md w-full mx-auto text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-800 mb-4"></div>
+            <h3 class="text-lg font-medium text-gray-900">Verifying your account...</h3>
+            <p class="text-gray-500 text-sm">Connecting to Aarambh Times secure servers</p>
+        </div>
 
-  <div id="screen-dashboard" style="display:none;">
-    <div class="card">
-      <h3 id="welcome-name"></h3>
-      <div id="course-list"></div>
-    </div>
-    <div style="text-align:center; margin-top:30px; color:#666; font-size:13px;">
-      Need help? WhatsApp <strong>+91 9761241743</strong><br>
-      <a href="https://www.aarambhtimes.in/" target="_blank">← Back to Aarambh Times</a>
-    </div>
-  </div>
-</div>
+        <div id="screen-dashboard" class="hidden w-full">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8 mb-8">
+                <h2 id="welcome-name" class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 heading-font"></h2>
+                <p class="text-gray-500 mb-8">Here are your enrolled mock tests and courses.</p>
+                
+                <div id="course-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-auto">
+        <div class="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-500 text-sm text-center md:text-left">
+                &copy; 2026 Aarambh Times. All rights reserved.
+            </p>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                Need help? WhatsApp 
+                <a href="https://wa.me/919761241743" target="_blank" class="font-bold text-green-600 hover:text-green-700 flex items-center gap-1 whatsapp-float">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    +91 9761241743
+                </a>
+            </div>
+        </div>
+    </footer>
 
 <script>
-// === CONFIG - REPLACE THESE THREE URLs AFTER DEPLOYING EACH GAS PROJECT ===
-const DASHBOARD_GAS = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmPY2MYqbEjZvBmw4UpTIkiCCOSwDUoGGdjqFVHzvVrLDR_j3KjgbaQ/exec";
-const REGISTRATION_GAS = "https://script.google.com/macros/s/AKfycbyEx-gjt8lVSVcRUpzZoO-YgZHaxaPSjyM6SKWYh22ICzCp_lVx0bmXaoVa_XkMYgWU8w/exec"; // not used in frontend yet
-const QUIZ_GAS = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
+    // === CONFIG ===
+    // Points to Project 1: UPSC DASHBOARD API
+    const DASHBOARD_GAS = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmPY2MYqbEjZvBmw4UpTIkiCCOSwDUoGGdjqFVHzvVrLDR_j3KjgbaQ/exec";
+    
+    // UI Element References
+    const screenSignin = document.getElementById("screen-signin");
+    const screenLoading = document.getElementById("screen-loading");
+    const screenDashboard = document.getElementById("screen-dashboard");
+    const userInfo = document.getElementById("user-info");
 
-function initializeGoogleSignIn() {
-  google.accounts.id.initialize({
-    client_id: "1075233010167-2816dumqer76a3s4rki9t59ea2hu3ual.apps.googleusercontent.com",   // ← Create in Google Cloud Console
-    callback: handleCredentialResponse
-  });
-  google.accounts.id.renderButton(
-    document.getElementById("g_id_signin"),
-    { theme: "outline", size: "large", width: 240 }
-  );
-}
+    function initializeGoogleSignIn() {
+        google.accounts.id.initialize({
+            client_id: "1075233010167-2816dumqer76a3s4rki9t59ea2hu3ual.apps.googleusercontent.com",
+            callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+            document.getElementById("g_id_signin"),
+            { theme: "outline", size: "large", width: 280, shape: "rectangular" }
+        );
+    }
 
-async function handleCredentialResponse(response) {
-  document.getElementById("screen-signin").style.display = "none";
-  document.getElementById("screen-loading").style.display = "block";
+    async function handleCredentialResponse(response) {
+        // Toggle UI to Loading
+        screenSignin.classList.add("hidden");
+        screenLoading.classList.remove("hidden");
 
-  const idToken = response.credential;
+        const idToken = response.credential;
 
-  const res = await fetch(`${DASHBOARD_GAS}?action=verifyLogin&idToken=${idToken}`);
-  const data = await res.json();
+        try {
+            const res = await fetch(`${DASHBOARD_GAS}?action=verifyLogin&idToken=${idToken}`);
+            const data = await res.json();
 
-  document.getElementById("screen-loading").style.display = "none";
+            screenLoading.classList.add("hidden");
 
-  if (data.status === "success") {
-    document.getElementById("screen-dashboard").style.display = "block";
-    document.getElementById("user-info").style.display = "flex";
-    document.getElementById("welcome-name").innerHTML = `Welcome, <strong>${data.userName}</strong>`;
-    document.getElementById("user-email").innerText = data.userEmail;
-    renderProducts(data.products);
-  } else if (data.status === "not_registered") {
-    alert("You are not registered yet. Redirecting to registration form...");
-    window.location.href = data.regForm;
-  } else {
-    alert("Login failed: " + (data.message || "Please try again"));
-    location.reload();
-  }
-}
+            if (data.status === "success") {
+                // Toggle UI to Dashboard
+                screenDashboard.classList.remove("hidden");
+                userInfo.classList.remove("hidden");
+                userInfo.classList.add("flex"); // Tailwind flex
+                
+                // Populate Data
+                document.getElementById("welcome-name").innerHTML = `Welcome back, <span class="text-blue-700">${data.userName}</span>`;
+                document.getElementById("user-name").innerText = data.userName;
+                document.getElementById("user-email").innerText = data.userEmail;
+                
+                renderProducts(data.products);
+            } else if (data.status === "not_registered") {
+                alert("You are not registered yet. Redirecting to registration form...");
+                window.location.href = data.regForm;
+            } else {
+                alert("Login failed: " + (data.message || "Please try again"));
+                location.reload();
+            }
+        } catch (error) {
+            alert("Connection error. Please try again later.");
+            location.reload();
+        }
+    }
 
-function renderProducts(products) {
-  const list = document.getElementById("course-list");
-  list.innerHTML = "";
-  if (products.length === 0) {
-    list.innerHTML = `<div class="card"><h4>No products yet</h4><p>Free quiz appears within minutes of registration.</p></div>`;
-    return;
-  }
-  products.forEach(p => {
-    const div = document.createElement("div");
-    div.className = `card ${p.isLocked ? "locked" : ""}`;
-    div.innerHTML = `
-      <div style="color:#137333; font-weight:bold; font-size:13px;">${p.id.includes("FREE") ? "FREE" : "PREMIUM"}</div>
-      <h4>${p.name}</h4>
-      <p>${p.totalTests} Mock Tests Available</p>
-      ${p.isLocked 
-        ? `<div style="color:red; font-weight:bold;">Payment Pending Verification (24-48 hrs)</div>` 
-        : `<button class="btn" onclick="startTest('${p.id}')">Start Mock Tests →</button>`}
-    `;
-    list.appendChild(div);
-  });
-}
+    function renderProducts(products) {
+        const list = document.getElementById("course-list");
+        list.innerHTML = "";
+        
+        if (products.length === 0) {
+            list.innerHTML = `
+                <div class="col-span-full bg-blue-50 text-blue-800 p-6 rounded-xl border border-blue-200 text-center">
+                    <h4 class="font-bold text-lg mb-2">No active products found</h4>
+                    <p class="text-sm">If you just registered, your free quiz will appear here within 10 minutes.</p>
+                </div>`;
+            return;
+        }
 
-function startTest(productId) {
-  window.location.href = `quiz.html?productId=${productId}&testNumber=1`;
-}
+        products.forEach(p => {
+            const isFree = p.id.includes("FREE");
+            const div = document.createElement("div");
+            
+            // Tailwind styling for the product card
+            div.className = `bg-white rounded-xl shadow border border-gray-100 flex flex-col overflow-hidden hover:shadow-md transition-shadow relative
+                ${p.isLocked ? "opacity-75 grayscale-[30%]" : ""}
+            `;
+            
+            // Top color bar indicating tier
+            const barColor = isFree ? "bg-green-500" : "bg-blue-600";
+            const badgeText = isFree ? "FREE" : "PREMIUM";
+            const badgeColor = isFree ? "bg-green-100 text-green-800" : "bg-blue-100 text-blue-800";
 
-function signOut() {
-  google.accounts.id.disableAutoSelect();
-  location.reload();
-}
+            div.innerHTML = `
+                <div class="h-2 w-full ${barColor}"></div>
+                <div class="p-6 flex-grow flex flex-col">
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="text-xs font-bold px-2 py-1 rounded ${badgeColor}">${badgeText}</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-2 leading-tight">${p.name}</h4>
+                    <p class="text-sm text-gray-500 mb-6 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        ${p.totalTests} Mock Tests Available
+                    </p>
+                    
+                    <div class="mt-auto">
+                        ${p.isLocked 
+                            ? `<div class="bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold p-3 rounded text-center">
+                                 Payment Pending Verification (24-48 hrs)
+                               </div>` 
+                            : `<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2" onclick="startTest('${p.id}')">
+                                 Start Mock Tests 
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                               </button>`
+                        }
+                    </div>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
 
-window.onload = initializeGoogleSignIn;
+    function startTest(productId) {
+        // Redirects to your existing quiz engine page
+        window.location.href = `quiz.html?productId=${productId}&testNumber=1`;
+    }
+
+    function signOut() {
+        google.accounts.id.disableAutoSelect();
+        location.reload();
+    }
+
+    window.onload = initializeGoogleSignIn;
 </script>
+
 </body>
 </html>
