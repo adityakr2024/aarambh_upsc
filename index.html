@@ -164,7 +164,7 @@
     </div>
   </section>
 
-  <!-- Products Showcase -->
+  <!-- Products Showcase (visible to everyone) -->
   <section class="py-16 px-4 max-w-5xl mx-auto">
     <div class="text-center mb-10">
       <p class="text-sm font-semibold text-[#1e40af] uppercase tracking-wider mb-2">Our Products</p>
@@ -174,6 +174,7 @@
 
     <div class="grid sm:grid-cols-2 gap-6">
 
+      <!-- Free Product Card -->
       <div class="product-card border-green-200 bg-gradient-to-br from-green-50 to-white">
         <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full mb-4">FREE • No Registration</span>
         <h3 class="text-xl font-bold text-slate-900 mb-1">Free UPSC Prelims Quiz</h3>
@@ -198,6 +199,7 @@
         </a>
       </div>
 
+      <!-- Mini Test Series Card -->
       <div class="product-card border-amber-200 bg-gradient-to-br from-amber-50 to-white">
         <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">PRODUCT #2 • Paid</span>
         <h3 class="text-xl font-bold text-slate-900 mb-1">Mini Test Series</h3>
@@ -224,6 +226,7 @@
 
     </div>
 
+    <!-- Upcoming -->
     <div class="mt-6 bg-white border border-dashed border-slate-300 rounded-2xl p-5 text-center">
       <span class="text-slate-400 text-sm font-medium">🔜 Current Affairs — Coming soon on aarambhtimes.in</span>
     </div>
@@ -257,6 +260,7 @@
       <p class="text-xs text-slate-400">After registering, sign in again with the same Google account.</p>
     </div>
 
+    <!-- Still show free quiz CTA -->
     <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
       <p class="font-semibold text-green-800 mb-2">No registration needed for Free Quiz!</p>
       <a href="https://aarambhtimes.in#free-quiz"
@@ -271,11 +275,12 @@
 <!-- ══ END STATE: NOT REGISTERED ══ -->
 
 <!-- ══════════════════════════════════════════════
-     STATE: DASHBOARD
+     STATE: DASHBOARD (Registered & logged in)
 ═══════════════════════════════════════════════════ -->
 <div id="state-dashboard" class="fade-up">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
 
+    <!-- Welcome banner -->
     <div class="bg-gradient-to-r from-[#1e40af] to-[#0f2a7a] text-white rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
         <p class="text-white/70 text-sm mb-1">Welcome back 👋</p>
@@ -288,6 +293,7 @@
       </div>
     </div>
 
+    <!-- Stats row -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
       <div class="bg-white rounded-2xl p-5 border border-slate-100">
         <p class="text-xs text-slate-500 mb-1">Products</p>
@@ -307,15 +313,19 @@
       </div>
     </div>
 
+    <!-- Products section -->
     <div class="mb-10">
       <h3 class="text-lg font-semibold text-slate-900 mb-4">📦 My Products</h3>
       <div id="products-grid" class="grid sm:grid-cols-2 gap-5">
+        <!-- Injected by JS -->
       </div>
     </div>
 
+    <!-- Quiz History section -->
     <div>
       <h3 class="text-lg font-semibold text-slate-900 mb-4">📊 Quiz History</h3>
       <div id="quiz-history-wrap" class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <!-- Injected by JS -->
       </div>
     </div>
 
@@ -383,16 +393,12 @@ function initGoogleSignIn() {
   });
 }
 
-// ─────────────────────────────────────────────────
-//  FIXED triggerGoogleSignIn() ← ONLY THIS WAS CHANGED
-// ─────────────────────────────────────────────────
 function triggerGoogleSignIn() {
   if (typeof google === 'undefined' || !google.accounts) {
     alert('Google Sign-In is still loading. Please wait a second and try again.');
     return;
   }
 
-  // This forces the classic Google popup even when FedCM is disabled (incognito / Chrome setting)
   const tempDiv = document.createElement('div');
   tempDiv.style.position = 'fixed';
   tempDiv.style.top = '-9999px';
@@ -407,15 +413,11 @@ function triggerGoogleSignIn() {
 
   setTimeout(() => {
     const googleBtn = tempDiv.querySelector('div[role="button"]');
-    if (googleBtn) {
-      googleBtn.click();
-    } else {
-      alert('Could not open Google sign-in. Please refresh the page and try again.');
-    }
+    if (googleBtn) googleBtn.click();
+    else alert('Could not open Google sign-in. Please refresh the page and try again.');
     setTimeout(() => tempDiv.remove(), 2000);
   }, 200);
 }
-// ─────────────────────────────────────────────────
 
 async function handleCredentialResponse(response) {
   _idToken = response.credential;
@@ -506,6 +508,12 @@ function renderDashboard(user, attempts) {
     products.forEach(function(p) {
       var card = document.createElement('div');
       card.className = 'product-card' + (p.isLocked ? ' locked' : '');
+
+      // Smart link for quiz
+      var link = p.link || '#';
+      if (p.id === 'F1_FREE') link = 'quiz.html?productId=F1_FREE&testNumber=1&testName=Free Mock Quiz';
+      else if (p.id === 'B1_UPSC') link = 'quiz.html?productId=B1_UPSC&testNumber=1&testName=Pre P1 Mock Test';
+
       card.innerHTML =
         '<div class="flex items-start justify-between mb-3">' +
           '<span class="text-xs font-bold px-2.5 py-1 rounded-full ' + (p.isFree ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800') + '">' + (p.isFree ? 'FREE' : 'PURCHASED') + '</span>' +
@@ -516,7 +524,7 @@ function renderDashboard(user, attempts) {
           '<span class="text-xs text-slate-400">' + escHtml(p.totalTests) + ' Quizzes</span>' +
           (p.isLocked
             ? '<span class="text-xs text-amber-600 font-medium">Contact support to activate</span>'
-            : '<a href="' + escHtml(p.link || '#') + '" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">' + (p.isFree ? 'Start Quiz →' : 'Open Series →') + '</a>'
+            : '<a href="' + link + '" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">' + (p.isFree ? 'Start Quiz →' : 'Open Series →') + '</a>'
           ) +
         '</div>';
       grid.appendChild(card);
@@ -561,6 +569,7 @@ function renderDashboard(user, attempts) {
   }
 }
 
+// ── UI helpers (exactly your original) ─────────────────────────────────────
 function showState(name) {
   var states = ['loading', 'signed-out', 'not-registered', 'dashboard'];
   states.forEach(function(s) {
