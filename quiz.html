@@ -662,6 +662,7 @@ async function doFinalSubmit(auto=false){
       body:JSON.stringify({
         action:'submitTest', email:S.email,
         productId:S.productId, testNumber:S.testNumber,
+        testName: S.testName,
         score, totalQuestions:S.questions.length,
         timeTaken:`${Math.floor(elapsed/60)}m ${elapsed%60}s`,
         correct, wrong, skip
