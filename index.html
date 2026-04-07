@@ -518,24 +518,65 @@ function renderDashboard(user, attempts) {
       var card = document.createElement('div');
       card.className = 'product-card' + (p.isLocked ? ' locked' : '');
 
-      // Smart link for quiz
-      var link = p.link || '#';
-      if (p.id === 'F1_FREE') link = 'quiz.html?productId=F1_FREE&testNumber=1&testName=Free Mock Quiz';
-      else if (p.id === 'B1_UPSC') link = 'quiz.html?productId=B1_UPSC&testNumber=1&testName=Pre P1 Mock Test';
+      // Use tests[] array from backend (new). Fall back gracefully if absent.
+      var tests = (p.tests && p.tests.length > 0) ? p.tests : null;
+      var testCount = tests ? tests.length : (parseInt(p.totalTests) || 1);
+
+      // Build bottom action area
+      var actionHtml = '';
+      if (p.isLocked) {
+        // Locked: show support message regardless of test count
+        actionHtml =
+          '<div class="flex items-center justify-between">' +
+            '<span class="text-xs text-slate-400">' + testCount + ' Quiz' + (testCount !== 1 ? 'zes' : '') + '</span>' +
+            '<span class="text-xs text-amber-600 font-medium">Contact support to activate</span>' +
+          '</div>';
+
+      } else if (!tests || tests.length <= 1) {
+        // Single test product (F1_FREE or any 1-test product)
+        var t0       = tests ? tests[0] : null;
+        var tNum     = t0 ? t0.testNumber : 1;
+        var tName    = t0 ? t0.testName  : (p.isFree ? 'Free Mock Quiz' : 'Test 1');
+        var singleLink = 'quiz.html?productId=' + encodeURIComponent(p.id) +
+                         '&testNumber=' + tNum +
+                         '&testName='   + encodeURIComponent(tName);
+        actionHtml =
+          '<div class="flex items-center justify-between">' +
+            '<span class="text-xs text-slate-400">' + testCount + ' Quiz</span>' +
+            '<a href="' + singleLink + '" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">Start Quiz →</a>' +
+          '</div>';
+
+      } else {
+        // Bundle: render one clickable row per test from tests[]
+        var rows = tests.map(function(t) {
+          var tLink = 'quiz.html?productId=' + encodeURIComponent(p.id) +
+                      '&testNumber=' + t.testNumber +
+                      '&testName='   + encodeURIComponent(t.testName);
+          return '<a href="' + tLink + '" ' +
+                 'class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl border border-slate-200 ' +
+                 'hover:border-[#1e40af] hover:bg-blue-50 transition-colors group">' +
+                   '<span class="text-sm font-medium text-slate-700 group-hover:text-[#1e40af]">' + escHtml(t.testName) + '</span>' +
+                   '<span class="text-xs font-bold text-[#1e40af]">Start →</span>' +
+                 '</a>';
+        }).join('');
+        actionHtml =
+          '<div class="flex items-center justify-between mb-2">' +
+            '<span class="text-xs text-slate-400">' + testCount + ' Quizzes</span>' +
+          '</div>' +
+          '<div class="flex flex-col gap-2">' + rows + '</div>';
+      }
 
       card.innerHTML =
         '<div class="flex items-start justify-between mb-3">' +
-          '<span class="text-xs font-bold px-2.5 py-1 rounded-full ' + (p.isFree ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800') + '">' + (p.isFree ? 'FREE' : 'PURCHASED') + '</span>' +
+          '<span class="text-xs font-bold px-2.5 py-1 rounded-full ' +
+            (p.isFree ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800') + '">' +
+            (p.isFree ? 'FREE' : 'PURCHASED') +
+          '</span>' +
         '</div>' +
         '<h4 class="font-bold text-slate-900 mb-1">' + escHtml(p.name) + '</h4>' +
         '<p class="text-sm text-slate-500 mb-4">' + escHtml(p.description || 'UPSC Prelims Paper 1 • हिंदी माध्यम') + '</p>' +
-        '<div class="flex items-center justify-between">' +
-          '<span class="text-xs text-slate-400">' + escHtml(p.totalTests) + ' Quizzes</span>' +
-          (p.isLocked
-            ? '<span class="text-xs text-amber-600 font-medium">Contact support to activate</span>'
-            : '<a href="' + link + '" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">' + (p.isFree ? 'Start Quiz →' : 'Open Series →') + '</a>'
-          ) +
-        '</div>';
+        actionHtml;
+
       grid.appendChild(card);
     });
   }
