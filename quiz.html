@@ -509,7 +509,7 @@ function startCloud() {
   S.handles.cloud = setInterval(async ()=>{
     try {
       await fetch(QUIZ_ENGINE_URL, {
-        method:'POST', headers:{'Content-Type':'application/json'},
+        method:'POST', headers:{'Content-Type':'text/plain'},
         body:JSON.stringify({
           action:'saveProgress', email:S.email,
           productId:S.productId, testNumber:S.testNumber,
@@ -658,7 +658,7 @@ async function doFinalSubmit(auto=false){
   el('loader').classList.add('show');
   try {
     await fetch(QUIZ_ENGINE_URL,{
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'text/plain'},
       body:JSON.stringify({
         action:'submitTest', email:S.email,
         productId:S.productId, testNumber:S.testNumber,
