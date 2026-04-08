@@ -665,7 +665,8 @@ async function doFinalSubmit(auto=false){
         testName: S.testName,
         score, totalQuestions:S.questions.length,
         timeTaken:`${Math.floor(elapsed/60)}m ${elapsed%60}s`,
-        correct, wrong, skip
+        correct, wrong, skip,
+        answersJSON: JSON.stringify(S.answers)   // per-question responses for scorecard
       })
     });
   } catch(e){ console.warn('Submit POST failed (non-fatal):',e.message); }
