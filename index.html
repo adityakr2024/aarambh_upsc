@@ -407,11 +407,14 @@ function initGoogleSignIn() {
     client_id: GOOGLE_CLIENT_ID,
     callback: handleCredentialResponse,
     auto_select: false,
-    cancel_on_tap_outside: true
+    cancel_on_tap_outside: true,
+    use_fedcm: true                     
   });
-  google.accounts.id.prompt(function(notification) {
-    // One tap notification — no action needed
+  google.accounts.id.addMomentListener((notification) => {
+    // Optional: track UI moments if needed
+    // console.log('GSI moment:', notification.getMomentType());
   });
+  google.accounts.id.prompt();          
 }
 
 function triggerGoogleSignIn() {
