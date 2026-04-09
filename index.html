@@ -332,7 +332,7 @@
 
     <!-- Quiz History section -->
     <div>
-      <h3 class="text-lg font-semibold text-slate-900 mb-4">📊 Quiz History</h3>
+      <h3 class="text-lg font-semibold text-slate-900 mb-4">📊 My Performance</h3>
       <div id="quiz-history-wrap" class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
         <!-- Injected by JS -->
       </div>
@@ -438,7 +438,7 @@ async function handleCredentialResponse(response) {
 
     if (userData.status === 'success') {
       setLoadingMsg('Loading your dashboard…');
-      var historyData = await callAPI('getQuizHistory', { idToken: _idToken });
+      var historyData = await callAPI('getLatestAttempts', { idToken: _idToken });
       renderDashboard(userData, historyData.attempts || []);
       showState('dashboard');
       showUserPill(userData.userName, userData.userEmail);
@@ -581,42 +581,115 @@ function renderDashboard(user, attempts) {
     });
   }
 
-  var wrap = document.getElementById('quiz-history-wrap');
-  if (attempts.length === 0) {
-    wrap.innerHTML =
-      '<div class="p-10 text-center">' +
-        '<p class="text-4xl mb-3">📝</p>' +
-        '<p class="text-slate-500 font-medium">No quizzes attempted yet</p>' +
-        '<p class="text-slate-400 text-sm mt-1">Your completed quiz results will appear here.</p>' +
-      '</div>';
-  } else {
-    var rows = attempts.map(function(a) {
-      var pct = parseFloat(a.percentage) || 0;
-      var badgeCls = pct >= 66 ? 'good' : pct >= 40 ? 'average' : 'poor';
-      var date = a.timestamp ? new Date(a.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
-      return '<tr class="quiz-row border-t border-slate-100">' +
-        '<td class="px-5 py-3.5 text-sm text-slate-700">' + escHtml(a.quizName || a.quizId) + '</td>' +
-        '<td class="px-4 py-3.5 text-sm text-slate-600 hidden sm:table-cell">' + date + '</td>' +
-        '<td class="px-4 py-3.5 text-sm text-slate-600">' + escHtml(a.score) + ' / ' + escHtml(a.total) + '</td>' +
-        '<td class="px-4 py-3.5"><span class="score-badge ' + badgeCls + '">' + pct.toFixed(1) + '%</span></td>' +
-        '<td class="px-4 py-3.5 text-sm text-slate-400 hidden md:table-cell">' + escHtml(a.timeTaken || '—') + '</td>' +
-      '</tr>';
-    }).join('');
+var wrap = document.getElementById('quiz-history-wrap');
 
-    wrap.innerHTML =
-      '<table class="w-full">' +
-        '<thead>' +
-          '<tr class="bg-slate-50 text-left">' +
-            '<th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Quiz</th>' +
-            '<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Date</th>' +
-            '<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Score</th>' +
-            '<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">%</th>' +
-            '<th class="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Time</th>' +
-          '</tr>' +
-        '</thead>' +
-        '<tbody>' + rows + '</tbody>' +
-      '</table>';
-  }
+if (attempts.length === 0) {
+  wrap.innerHTML =
+    '<div class="p-10 text-center">' +
+      '<p class="text-4xl mb-3">📝</p>' +
+      '<p class="text-slate-500 font-medium">No quizzes attempted yet</p>' +
+      '<p class="text-slate-400 text-sm mt-1">Attempt a quiz to see your scorecard here.</p>' +
+    '</div>';
+} else {
+  // Build a lookup: productId + testNumber → attempt
+  // So we can match each attempt to its test card
+  var attemptMap = {};
+  attempts.forEach(function(a) {
+    attemptMap[a.productId + '|' + a.testNumber] = a;
+  });
+
+  var cards = attempts.map(function(a) {
+    var pct      = parseFloat(a.percentage) || 0;
+    var correct  = parseInt(a.correct)  || 0;
+    var wrong    = parseInt(a.wrong)    || 0;
+    var skipped  = parseInt(a.skipped)  || 0;
+    var total    = parseInt(a.total)    || 0;
+    var score    = parseFloat(a.score)  || 0;
+    var maxMarks = total * 2;
+
+    // Colour the score circle based on percentage
+    var circleColor = pct >= 66 ? '#16a34a' : pct >= 40 ? '#d97706' : '#dc2626';
+
+    // "Start Again" link
+    var retakeLink = 'quiz.html?productId=' + encodeURIComponent(a.productId) +
+                     '&testNumber=' + encodeURIComponent(a.testNumber) +
+                     '&testName='   + encodeURIComponent(a.testName);
+
+    var lastDate = a.lastUpdated
+      ? new Date(a.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      : '—';
+
+    return (
+      '<div class="bg-white rounded-2xl border border-slate-100 p-5 mb-4">' +
+
+        // Header row: test name + date
+        '<div class="flex items-center justify-between mb-4">' +
+          '<div>' +
+            '<p class="text-xs font-semibold text-[#1e40af] uppercase tracking-wider mb-0.5">' + escHtml(a.productId) + '</p>' +
+            '<h4 class="font-bold text-slate-900">' + escHtml(a.testName) + '</h4>' +
+          '</div>' +
+          '<span class="text-xs text-slate-400">Last: ' + lastDate + '</span>' +
+        '</div>' +
+
+        // Score + stats grid
+        '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">' +
+
+          // Correct
+          '<div class="bg-green-50 rounded-xl p-3 text-center">' +
+            '<p class="text-xs font-semibold text-green-700 mb-1">✓ Correct</p>' +
+            '<p class="text-xl font-bold text-green-700">' + correct + '<span class="text-xs font-normal text-green-500"> / ' + total + '</span></p>' +
+            '<p class="text-xs text-green-600 mt-0.5">+' + (correct * 2) + ' marks</p>' +
+          '</div>' +
+
+          // Wrong
+          '<div class="bg-red-50 rounded-xl p-3 text-center">' +
+            '<p class="text-xs font-semibold text-red-700 mb-1">✗ Wrong</p>' +
+            '<p class="text-xl font-bold text-red-700">' + wrong + '<span class="text-xs font-normal text-red-400"> / ' + total + '</span></p>' +
+            '<p class="text-xs text-red-600 mt-0.5">−' + (Math.round(wrong * 2/3 * 100)/100) + ' marks</p>' +
+          '</div>' +
+
+          // Skipped
+          '<div class="bg-slate-50 rounded-xl p-3 text-center">' +
+            '<p class="text-xs font-semibold text-slate-600 mb-1">— Skipped</p>' +
+            '<p class="text-xl font-bold text-slate-600">' + skipped + '<span class="text-xs font-normal text-slate-400"> / ' + total + '</span></p>' +
+            '<p class="text-xs text-slate-500 mt-0.5">0 marks</p>' +
+          '</div>' +
+
+          // Score
+          '<div class="bg-blue-50 rounded-xl p-3 text-center">' +
+            '<p class="text-xs font-semibold text-[#1e40af] mb-1">Score</p>' +
+            '<p class="text-xl font-bold text-[#1e40af]">' + score + '<span class="text-xs font-normal text-blue-400"> / ' + maxMarks + '</span></p>' +
+            '<p class="text-xs text-blue-600 mt-0.5">' + pct.toFixed(1) + '%</p>' +
+          '</div>' +
+
+        '</div>' +
+
+        // Bottom row: accuracy + time + retake button
+        '<div class="flex items-center justify-between flex-wrap gap-2">' +
+          '<div class="flex gap-4">' +
+            '<div class="text-center">' +
+              '<p class="text-xs text-slate-400">Accuracy</p>' +
+              '<p class="text-sm font-bold" style="color:' + circleColor + '">' +
+                (total - skipped > 0 ? Math.round(correct / (total - skipped) * 100) : 0) + '%' +
+              '</p>' +
+            '</div>' +
+            '<div class="text-center">' +
+              '<p class="text-xs text-slate-400">Time Taken</p>' +
+              '<p class="text-sm font-bold text-slate-700">' + escHtml(a.timeTaken || '—') + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<a href="' + retakeLink + '" ' +
+             'class="bg-[#1e40af] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">' +
+            'Attempt Again →' +
+          '</a>' +
+        '</div>' +
+
+      '</div>'
+    );
+  }).join('');
+
+  wrap.innerHTML = cards;
+}
 }
 
 // ── UI helpers (exactly your original) ─────────────────────────────────────
