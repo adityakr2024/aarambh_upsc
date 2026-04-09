@@ -366,6 +366,7 @@ const S = {
   submitted:false,
   sessionKey:'',
   handles:{ timer:null, ls:null, cloud:null },
+  reviewMode: false,        // true when opened via Review Answers link
 };
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
@@ -385,6 +386,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   S.productId  = p.get('productId') || '';
   S.testNumber = parseInt(p.get('testNumber')||'1', 10);
   S.testName   = decodeURIComponent(p.get('testName')||`Test ${S.testNumber}`);
+  const mode          = p.get('mode') || 'quiz';
+  S.reviewMode        = (mode === 'review');   // stored on S so beforeunload can check it
+  const reviewAnswers = p.get('answersJSON') || '{}';
   if (!S.productId) {
     showErr('Invalid Link','This quiz URL is missing productId. Please go back to the dashboard and click the test again.');
     return;
@@ -399,14 +403,40 @@ window.addEventListener('DOMContentLoaded', async () => {
   setLoader('Fetching questions…');
   if (!await fetchQs()) return;
 
-  // 4. Check for saved session
+  // 4. Check mode — review or normal quiz
   hideLoader();
-  const saved = loadSess();
-  if (saved && !saved.submitted && saved.email === S.email) {
-    showResumeModal(saved);
+  if (S.reviewMode) {
+    // Parse answersJSON from URL — keys come back as strings from JSON.parse,
+    // convert to integers so buildReview()'s S.answers[i] lookup works correctly
+    try {
+      const parsed = JSON.parse(decodeURIComponent(reviewAnswers));
+      S.answers = {};
+      Object.keys(parsed).forEach(k => { S.answers[parseInt(k, 10)] = parsed[k]; });
+    } catch(e) { S.answers = {}; }
+
+    // Calculate score from restored answers
+    let correct=0, wrong=0, skip=0;
+    S.questions.forEach((q,i) => {
+      const ua = S.answers[i];
+      if (!ua) skip++; else if (ua === q.correct) correct++; else wrong++;
+    });
+    const raw   = correct*2 - wrong*(2/3);
+    const score = Math.round(Math.max(0,raw)*100)/100;
+    const maxM  = S.questions.length * 2;
+
+    // elapsed:-1 tells showResult to display "—" instead of "00:00"
+    showResult({score, maxM, correct, wrong, skip, elapsed:-1});
+    buildReview();
+    el('reviewContainer').style.display = 'block';
+
   } else {
-    initFresh();
-    beginQuiz();
+    const saved = loadSess();
+    if (saved && !saved.submitted && saved.email === S.email) {
+      showResumeModal(saved);
+    } else {
+      initFresh();
+      beginQuiz();
+    }
   }
 });
 
@@ -680,7 +710,8 @@ async function doFinalSubmit(auto=false){
 function showResult({score,maxM,correct,wrong,skip,elapsed}){
   const pct=maxM>0?Math.round(score/maxM*100):0;
   const grade=pct>=70?'🏆 Excellent':pct>=50?'✅ Good':pct>=35?'📘 Average':'📖 Needs More Practice';
-  const mm=String(Math.floor(elapsed/60)).padStart(2,'0'), ss=String(elapsed%60).padStart(2,'0');
+  const mm=elapsed>=0 ? String(Math.floor(elapsed/60)).padStart(2,'0') : '—';
+  const ss=elapsed>=0 ? String(elapsed%60).padStart(2,'0') : '';
   el('resScore').textContent=score; el('resTotal').textContent=`/ ${maxM}`;
   el('resGrade').textContent=grade; el('resName').textContent=`${S.name} · ${S.testName}`;
   el('resEmail').textContent=S.email;
@@ -724,7 +755,7 @@ function el(id){ return document.getElementById(id); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // Save on page close/navigate away
-window.addEventListener('beforeunload',()=>{ if(!S.submitted&&S.questions.length>0) saveSess(); });
+window.addEventListener('beforeunload',()=>{ if(!S.submitted&&!S.reviewMode&&S.questions.length>0) saveSess(); });
 </script>
 </body>
 </html>
