@@ -403,23 +403,19 @@ window.addEventListener('load', function() {
 });
 
 function initGoogleSignIn() {
-  // Initialize Google Identity Services
   google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: handleCredentialResponse,
     auto_select: false,
-    cancel_on_tap_outside: true,
-    use_fedcm: true                     // Opt-in to FedCM (future-proof)
+    cancel_on_tap_outside: true
   });
 
-  if (typeof google.accounts.id.addMomentListener === 'function') {
-    google.accounts.id.addMomentListener((notification) => {
-      // Optional: track UI moments
-    });
-  }
-
-  // Display the One Tap prompt
-  google.accounts.id.prompt();
+  google.accounts.id.prompt((notification) => {
+    // Optional: Log if prompt isn't displayed (for debugging only)
+    if (notification.isNotDisplayed()) {
+      console.log('One Tap not shown – user may need to click sign-in button.');
+    }
+  });
 }
 
 function triggerGoogleSignIn() {
