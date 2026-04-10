@@ -87,7 +87,7 @@
       overflow-y: scroll;          /* permanent scrollbar – prevents width jump */
       padding:20px;
       display: grid;
-      grid-template-columns: 501px 384px;
+      grid-template-columns: minmax(400px, 501px) minmax(300px, 384px);
       grid-template-rows: auto 1fr;
       gap: 20px;
       align-items: start;
@@ -108,16 +108,16 @@
 
     /* Left column: image panel – fixed width handled by grid */
     .q-left-col {
-      width: auto;
+      width: 100%;
       grid-column: 1;
       flex-shrink: unset;
       max-width: 100%;
-      overflow-x: hidden;           /* Prevent accidental overflow */
+      overflow-x: hidden;
     }
 
     /* Right column: options panel */
     .q-right-col {
-      width: auto;
+      width: 100%;
       grid-column: 2;
       flex-shrink: unset;
     }
@@ -134,13 +134,13 @@
       width:100%;
       background: transparent;
       display: block;
-      overflow-x: hidden;            /* Clip overflow */
+      overflow-x: hidden;
     }
     .qimg-box img{
       width:100%;
       height:auto;
       display:block;
-      max-width:100%;               /* Ensure image never exceeds container */
+      max-width:100%;
       border-radius: 0;
       box-shadow: none;
     }
@@ -170,10 +170,10 @@
       position:relative;
       display:flex;
       align-items:center;
-      justify-content:flex-start;   /* Align left for better readability */
+      justify-content:flex-start;
       gap:16px;
       padding:18px 20px;
-      width:100%;                   /* Fill entire grid cell */
+      width:100%;
       border:2px solid var(--border);
       border-radius:14px;
       cursor:pointer;
@@ -203,7 +203,7 @@
       font-size:16px;
       font-weight:600;
       color:var(--text2);
-      white-space: nowrap;          /* Prevent wrapping on desktop */
+      white-space: nowrap;
     }
     .opt-btn.sel .opt-lbl-txt{color:var(--blue2);font-weight:700}
 
@@ -286,13 +286,13 @@
     .rqfoot{padding:0 20px 16px}
     .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
-    /* Responsive – stacking behavior preserved */
+    /* Responsive */
     @media (max-width: 1100px) {
-      .qwrap { grid-template-columns: 450px 340px; }
+      .qwrap { grid-template-columns: minmax(350px, 450px) minmax(280px, 340px); }
     }
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 280px; }
-      .qwrap { grid-template-columns: 400px 300px; }
+      .qwrap { grid-template-columns: minmax(300px, 400px) minmax(250px, 300px); }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -303,12 +303,14 @@
       .timer { font-size: 16px; padding: 4px 10px; min-width: 78px; }
       .btn-exit { padding: 4px 10px; }
 
-      /* Stack layout on mobile */
+      /* Stack layout on mobile – CRITICAL FIXES */
       .qwrap {
         display: flex;
         flex-direction: column;
         overflow-y: auto;
         padding: 16px;
+        align-items: stretch;       /* Ensures children stretch full width */
+        gap: 20px;
       }
 
       .q-left-col, .q-right-col {
@@ -317,7 +319,7 @@
       }
 
       .q-left-col {
-        overflow-x: hidden;       /* Prevent horizontal scroll from images */
+        overflow-x: hidden;
       }
 
       .qimg-box {
@@ -331,17 +333,18 @@
 
       .opt-panel { padding: 16px 12px; }
       .optgrid { 
-        grid-template-columns: 1fr;   /* Single column on mobile */
+        grid-template-columns: 1fr;
         gap: 12px; 
       }
       .opt-btn { 
         padding: 18px 20px; 
         justify-content: flex-start;
+        width: 100%;
       }
       .opt-circle { width: 40px; height: 40px; font-size: 17px; }
       .opt-lbl-txt { 
         font-size: 16px; 
-        white-space: normal;          /* Allow wrapping if needed */
+        white-space: normal;
       }
 
       .abar { flex-direction: column; align-items: stretch; }
