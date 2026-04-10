@@ -71,7 +71,7 @@
     .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
     .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-    /* Body grid — sidebar fixed at 280px */
+    /* Body grid */
     .qbody{flex:1;display:grid;grid-template-columns:1fr 280px;min-height:0}
 
     /* Main panel */
@@ -81,14 +81,14 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper: image panel reduced width (~10% less) */
+    /* Question wrapper: image panel width reduced by ~10% */
     .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:grid;grid-template-columns:0.9fr 1.1fr;gap:20px;align-items:start}
     .qmeta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
     .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
     .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
     .qmarks-lbl{font-size:12px;color:var(--gray)}
 
-    /* Left: image panel — fluid height, width follows grid */
+    /* Image panel — fixed aspect ratio to prevent layout shift */
     .qimg-panel{
       background:#fafcff;
       border-radius:14px;
@@ -97,25 +97,32 @@
       height: auto;
     }
     .qimg-box{
+      position: relative;
       width:100%;
+      aspect-ratio: 16 / 9;        /* fixed box, no flicker */
       border-radius:10px;
       background:#fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .qimg-box img{
       width:100%;
-      height:auto;
+      height:100%;
+      object-fit: contain;         /* keeps aspect ratio, fits within box */
       display:block;
       border-radius:6px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.02);
+      background: #fff;
     }
     .img-msg, .img-err{
+      position: absolute;
       font-size:13px;
       color:var(--gray);
       text-align:center;
       padding:20px;
     }
 
-    /* Right: options panel */
+    /* Options panel */
     .opt-panel{
       background:#fff;
       border-radius:14px;
@@ -211,10 +218,9 @@
     .rqfoot{padding:0 20px 16px}
     .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
-    /* ─── RESPONSIVE (Mobile & Small Screens) ─────────────────── */
+    /* ─── RESPONSIVE ─────────────────── */
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 260px; }
-      .qsidebar { width: 260px; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -231,6 +237,7 @@
         padding: 16px;
       }
       .qimg-panel { padding: 10px; }
+      .qimg-box { aspect-ratio: 16 / 9; }  /* keep stable */
       .opt-panel { padding: 12px; }
       .optgrid { grid-template-columns: 1fr; gap: 8px; }
       .opt-btn { padding: 14px; }
@@ -253,7 +260,7 @@
   </style>
 </head>
 <body>
-<!-- Loader, modals, error, result, shell — same as before but with responsive adjustments -->
+<!-- (Loader, modals, error, result, shell identical) -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -424,6 +431,7 @@ const S = {
   sessionKey:'',
   handles:{ timer:null, ls:null, cloud:null },
   reviewMode: false,
+  preloadCache: new Map(),   // simple image preload cache
 };
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -488,6 +496,8 @@ async function fetchQs() {
     if (d.status !== 'success') { showErr('Test Not Found', d.message || 'Quiz Engine error.'); return false; }
     S.questions = (d.questions||[]).filter(q => q.correct && q.questionImg);
     if (!S.questions.length) { showErr('No Questions','This test has no questions.'); return false; }
+    // preload first few images
+    preloadAdjacent(0);
     return true;
   } catch(e) { showErr('Network Error','Could not load questions.'); return false; }
 }
@@ -599,6 +609,21 @@ function jumpSub(sub) {
   const i=S.questions.findIndex(q=>q.subject===sub); if(i>-1) goTo(i);
 }
 
+// Preload images around current index to reduce flicker
+function preloadAdjacent(idx) {
+  const urls = [];
+  if (idx > 0) urls.push(S.questions[idx-1]?.questionImg);
+  urls.push(S.questions[idx]?.questionImg);
+  if (idx < S.questions.length-1) urls.push(S.questions[idx+1]?.questionImg);
+  urls.filter(u=>u).forEach(url => {
+    if (!S.preloadCache.has(url)) {
+      const img = new Image();
+      img.src = url;
+      S.preloadCache.set(url, img);
+    }
+  });
+}
+
 function renderQ(idx) {
   S.currentQ=idx; S.visited[idx]=true;
   const q=S.questions[idx], n=S.questions.length;
@@ -608,14 +633,35 @@ function renderQ(idx) {
   el('prevBtn').disabled=idx===0;
   el('nextBtn').disabled=idx===n-1;
 
+  // Preload neighbours
+  preloadAdjacent(idx);
+
   const box=el('qimgBox');
-  box.innerHTML='<span class="img-msg">Loading image…</span>';
+  // Keep stable container: show loading message inside the aspect-ratio box
+  box.innerHTML = '<span class="img-msg">Loading…</span>';
   if(q.questionImg){
-    const img=new Image();
-    img.onload=()=>{ box.innerHTML=''; const i=document.createElement('img'); i.src=img.src; i.alt=`Q${idx+1}`; box.appendChild(i); };
-    img.onerror=()=>{ box.innerHTML='<span class="img-err">⚠ Image failed to load.</span>'; };
-    img.src=q.questionImg;
-  } else { box.innerHTML='<span class="img-err">No image for this question.</span>'; }
+    const cached = S.preloadCache.get(q.questionImg);
+    const useImg = cached && cached.complete ? cached : new Image();
+    const setImg = () => {
+      box.innerHTML = '';
+      const i = document.createElement('img');
+      i.src = q.questionImg;
+      i.alt = `Q${idx+1}`;
+      box.appendChild(i);
+    };
+    if (useImg.complete) {
+      setImg();
+    } else {
+      useImg.onload = setImg;
+      useImg.onerror = () => { box.innerHTML='<span class="img-err">⚠ Image failed to load.</span>'; };
+      if (!cached) {
+        useImg.src = q.questionImg;
+        S.preloadCache.set(q.questionImg, useImg);
+      }
+    }
+  } else {
+    box.innerHTML='<span class="img-err">No image for this question.</span>';
+  }
 
   const grid=el('optgrid'); grid.innerHTML='';
   ['A','B','C','D'].forEach(k=>{
