@@ -91,8 +91,8 @@
       overflow-y: auto;
       padding:20px;
       display: grid;
-      grid-template-columns: minmax(400px, 1fr) minmax(300px, 1fr);
-      grid-template-rows: auto auto;
+      grid-template-columns: 501px minmax(300px, 1fr);
+      grid-template-rows: auto 1fr;
       gap: 20px;
       align-items: start;
       max-width: 1200px;
@@ -113,11 +113,13 @@
     .qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
     .qmarks-lbl{font-size:13px;color:var(--gray);font-weight:500}
 
-    /* Left column: image panel */
+    /* Left column: image panel – fixed 501px width */
     .q-left-col {
-      width: 100%;
+      width: 501px;
       grid-column: 1;
       align-self: start;
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     /* Right column: options panel */
@@ -262,6 +264,8 @@
     }
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 280px; }
+      .qwrap { grid-template-columns: 400px minmax(250px, 1fr); }
+      .q-left-col { width: 400px; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -302,7 +306,7 @@
       .opt-lbl-txt { font-size: 16px; white-space: normal; }
       .abar { flex-direction: column; align-items: stretch; margin-top: 8px; }
       .navbar { flex-wrap: wrap; gap: 10px; margin-top: 4px; }
-      .navlbl { order: 0; width: auto; text-align: left; } /* adjust order */
+      .navlbl { order: 0; width: auto; text-align: left; }
       .bsubmit { padding: 10px 20px; }
     }
     @media (max-width: 480px) {
@@ -316,6 +320,7 @@
       .opt-lbl-txt { font-size: 15px; }
       .bact { padding: 10px 16px; font-size: 14px; }
       .bnav { padding: 10px 18px; }
+      .tb-test { font-size: 9.5px; opacity: 0.9; }
     }
   </style>
 </head>
@@ -561,10 +566,6 @@ function buildMobilePaletteContent() {
     <div class="sum-cell"><div class="sum-val s-nv">${nv}</div><div class="sum-lbl">Not Visited</div></div>
   `;
 }
-function updateMobilePaletteButton() {
-  // Show/hide based on screen width? We handle with CSS media query.
-  // Update content if modal is open? Not needed.
-}
 
 window.addEventListener('DOMContentLoaded', async () => {
   setLoader('Verifying session…');
@@ -619,6 +620,17 @@ window.addEventListener('DOMContentLoaded', async () => {
       beginQuiz();
     }
   }
+
+  // Resize handler for floating palette button
+  window.addEventListener('resize', () => {
+    const btn = el('floatingPaletteBtn');
+    if (window.innerWidth <= 800) {
+      btn.classList.add('show');
+    } else {
+      btn.classList.remove('show');
+      closeMobilePalette();
+    }
+  });
 });
 
 async function fetchQs() {
@@ -687,7 +699,6 @@ function relTime(ts) {
 function beginQuiz() {
   buildSections(); buildPalette(); renderQ(S.currentQ);
   startTimer(); startLS(); startCloud();
-  // Show floating palette button on mobile
   if (window.innerWidth <= 800) {
     el('floatingPaletteBtn').classList.add('show');
   }
@@ -811,7 +822,11 @@ function renderQ(idx) {
 
   el('markBtn').classList.toggle('active',!!S.marks[idx]);
   updPalette(); updSummary(); updSecTabs();
-  // Update mobile palette if modal is open? Not necessary.
+
+  // Live-update mobile palette if it's open
+  if (el('mobilePaletteModal').classList.contains('show')) {
+    buildMobilePaletteContent();
+  }
 }
 
 function selectAns(idx,key){ S.answers[idx]=key; renderQ(idx); saveSess(); }
