@@ -111,6 +111,8 @@
       width: auto;
       grid-column: 1;
       flex-shrink: unset;
+      max-width: 100%;
+      overflow-x: hidden;           /* Prevent accidental overflow */
     }
 
     /* Right column: options panel */
@@ -132,11 +134,13 @@
       width:100%;
       background: transparent;
       display: block;
+      overflow-x: hidden;            /* Clip overflow */
     }
     .qimg-box img{
       width:100%;
       height:auto;
       display:block;
+      max-width:100%;               /* Ensure image never exceeds container */
       border-radius: 0;
       box-shadow: none;
     }
@@ -148,7 +152,7 @@
       background: transparent;
     }
 
-    /* Options panel – border removed, better spacing */
+    /* Options panel – border removed, better spacing, full‑width buttons */
     .opt-panel{
       background:#fff;
       border-radius:14px;
@@ -166,9 +170,10 @@
       position:relative;
       display:flex;
       align-items:center;
-      justify-content:center;
-      gap:14px;
-      padding:20px 16px;
+      justify-content:flex-start;   /* Align left for better readability */
+      gap:16px;
+      padding:18px 20px;
+      width:100%;                   /* Fill entire grid cell */
       border:2px solid var(--border);
       border-radius:14px;
       cursor:pointer;
@@ -191,12 +196,14 @@
       font-weight:700;
       color:var(--text2);
       transition:all .15s;
+      flex-shrink:0;
     }
     .opt-btn.sel .opt-circle{background:var(--blue2);color:#fff}
     .opt-lbl-txt{
       font-size:16px;
       font-weight:600;
       color:var(--text2);
+      white-space: nowrap;          /* Prevent wrapping on desktop */
     }
     .opt-btn.sel .opt-lbl-txt{color:var(--blue2);font-weight:700}
 
@@ -303,13 +310,39 @@
         overflow-y: auto;
         padding: 16px;
       }
-      .q-left-col, .q-right-col { width: 100%; }
+
+      .q-left-col, .q-right-col {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .q-left-col {
+        overflow-x: hidden;       /* Prevent horizontal scroll from images */
+      }
+
+      .qimg-box {
+        overflow-x: hidden;
+      }
+
+      .qimg-box img {
+        max-width: 100%;
+        height: auto;
+      }
 
       .opt-panel { padding: 16px 12px; }
-      .optgrid { gap: 12px; }
-      .opt-btn { padding: 16px 14px; gap: 12px; }
+      .optgrid { 
+        grid-template-columns: 1fr;   /* Single column on mobile */
+        gap: 12px; 
+      }
+      .opt-btn { 
+        padding: 18px 20px; 
+        justify-content: flex-start;
+      }
       .opt-circle { width: 40px; height: 40px; font-size: 17px; }
-      .opt-lbl-txt { font-size: 15px; }
+      .opt-lbl-txt { 
+        font-size: 16px; 
+        white-space: normal;          /* Allow wrapping if needed */
+      }
 
       .abar { flex-direction: column; align-items: stretch; }
       .bgrp { justify-content: space-between; }
@@ -324,9 +357,9 @@
 
       .opt-panel { padding: 12px 10px; }
       .optgrid { gap: 10px; }
-      .opt-btn { padding: 14px 12px; gap: 10px; }
+      .opt-btn { padding: 16px 16px; }
       .opt-circle { width: 36px; height: 36px; font-size: 16px; }
-      .opt-lbl-txt { font-size: 14px; }
+      .opt-lbl-txt { font-size: 15px; }
 
       .bact { padding: 6px 12px; font-size: 12px; }
       .bnav { padding: 6px 16px; }
@@ -491,7 +524,7 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 const DURATION_SEC = 7200;
-const SHOW_SECTIONS = true;   // subject tabs still possible but subject label in meta removed
+const SHOW_SECTIONS = true;
 
 const LS_SAVE_MS    = 30_000;
 const CLOUD_SYNC_MS = 300_000;
