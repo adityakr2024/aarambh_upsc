@@ -32,7 +32,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Premium loading spinner ── */
+    /* ── Premium loading spinner (fixed mask) ── */
     .spinner-premium {
       width: 56px;
       height: 56px;
@@ -149,24 +149,28 @@
 </header>
 
 <!-- ══════════════════════════════════════════════
-     STATE: LOADING (Premium Experience)
+     STATE: LOADING (Fixed & Premium)
 ═══════════════════════════════════════════════════ -->
-<div id="state-loading" class="min-h-screen flex flex-col items-center justify-center gap-6 px-4">
-  <!-- Premium spinner with soft glow -->
-  <div class="relative">
-    <div class="absolute inset-0 bg-[#1e40af] opacity-10 rounded-full blur-xl animate-pulse"></div>
-    <div class="spinner-premium"></div>
-  </div>
-  
-  <!-- Dynamic message that cycles -->
-  <div class="text-center space-y-2">
-    <p class="text-lg font-medium text-slate-800" id="loading-title">Just a moment</p>
-    <p class="text-sm text-slate-500" id="loading-subtitle">Preparing your dashboard</p>
-  </div>
-  
-  <!-- Progress bar illusion -->
-  <div class="w-48 h-1 bg-slate-200 rounded-full overflow-hidden">
-    <div class="h-full bg-gradient-to-r from-[#1e40af] to-[#3b82f6] rounded-full animate-loading-bar"></div>
+<div id="state-loading" class="min-h-screen flex items-center justify-center bg-white px-4">
+  <div class="flex flex-col items-center justify-center gap-8 text-center max-w-md w-full">
+    
+    <!-- Premium Spinner with glow -->
+    <div class="relative">
+      <div class="absolute inset-0 bg-[#1e40af] opacity-10 rounded-full blur-3xl animate-pulse"></div>
+      <div class="spinner-premium"></div>
+    </div>
+
+    <!-- Dynamic text -->
+    <div>
+      <p id="loading-title" class="text-2xl font-semibold text-slate-800">Just a moment</p>
+      <p id="loading-subtitle" class="text-sm text-slate-500 mt-1">Preparing your dashboard</p>
+    </div>
+
+    <!-- Wider, smoother progress bar -->
+    <div class="w-80 max-w-[280px] h-2 bg-slate-200 rounded-3xl overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-[#1e40af] to-[#3b82f6] rounded-3xl animate-loading-bar"></div>
+    </div>
+
   </div>
 </div>
 
@@ -812,16 +816,20 @@ function setLoadingMsg(msg) {
   const subtitleEl = document.getElementById('loading-subtitle');
   
   if (titleEl && subtitleEl) {
+    // Set initial message
     titleEl.textContent = titles[0].title;
     subtitleEl.textContent = titles[0].subtitle;
     
-    const interval = setInterval(() => {
+    // Clear any existing interval before starting a new one
+    if (window._loadingInterval) {
+      clearInterval(window._loadingInterval);
+    }
+    
+    window._loadingInterval = setInterval(() => {
       idx = (idx + 1) % titles.length;
       titleEl.textContent = titles[idx].title;
       subtitleEl.textContent = titles[idx].subtitle;
     }, 1800);
-    
-    window._loadingInterval = interval;
   }
 }
 
