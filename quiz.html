@@ -71,7 +71,7 @@
     .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
     .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-    /* Body grid — sidebar width increased by 10% (from 280px to 308px) */
+    /* Body grid — sidebar fixed 308px */
     .qbody{flex:1;display:grid;grid-template-columns:1fr 308px;min-height:0}
 
     /* Main panel */
@@ -81,20 +81,26 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper: image panel ~10% less width, options panel wider */
-    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:grid;grid-template-columns:0.8fr 1.2fr;gap:20px;align-items:start}
-    .qmeta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    /* Question wrapper: flex row with fixed options width */
+    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:flex;gap:20px;align-items:flex-start}
+    .qmeta{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
     .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
     .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
     .qmarks-lbl{font-size:12px;color:var(--gray)}
 
-    /* Image panel — fixed width, fluid height based on image */
+    /* Left column: contains meta + image panel */
+    .q-left-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+    /* Right column: fixed width options panel */
+    .q-right-col{width:320px;flex-shrink:0;}
+
+    /* Image panel — fixed width (full width of left column) fluid height */
     .qimg-panel{
       background:#fafcff;
       border-radius:14px;
       border:1px solid var(--border);
       padding:14px;
       height: auto;
+      width:100%;
     }
     .qimg-box{
       width:100%;
@@ -103,7 +109,7 @@
     }
     .qimg-box img{
       width:100%;
-      height:auto;            /* fluid height */
+      height:auto;
       display:block;
       border-radius:6px;
       box-shadow:0 2px 6px rgba(0,0,0,0.02);
@@ -117,12 +123,13 @@
       border-radius: 10px;
     }
 
-    /* Options panel — slightly narrower now */
+    /* Options panel */
     .opt-panel{
       background:#fff;
       border-radius:14px;
       border:1px solid var(--border);
       padding:16px 14px;
+      width:100%;
     }
     .optgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
     .opt-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 12px;border:2px solid var(--border);border-radius:12px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
@@ -178,7 +185,7 @@
     .sum-lbl{font-size:9.5px;text-transform:uppercase;color:var(--gray);letter-spacing:.3px}
     .s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
 
-    /* Result screen (unchanged) */
+    /* Result screen */
     #resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
     #resscreen.show{display:flex}
     .rh{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
@@ -216,7 +223,7 @@
     /* Responsive */
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 280px; }
-      .qwrap { grid-template-columns: 0.9fr 1.1fr; }
+      .q-right-col { width: 280px; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -227,13 +234,9 @@
       .timer { font-size: 16px; padding: 4px 10px; min-width: 78px; }
       .btn-exit { padding: 4px 10px; }
       
-      .qwrap {
-        grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 16px;
-      }
-      .qimg-panel { padding: 10px; }
-      .opt-panel { padding: 12px; }
+      .qwrap { flex-direction: column; padding: 16px; }
+      .q-left-col { width: 100%; }
+      .q-right-col { width: 100%; }
       .optgrid { grid-template-columns: 1fr; gap: 8px; }
       .opt-btn { padding: 14px; }
       
@@ -255,7 +258,7 @@
   </style>
 </head>
 <body>
-<!-- (Loader, modals, error, result, shell identical) -->
+<!-- Loader, modals, error, result, shell same as before -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -349,16 +352,22 @@
     <div class="qmain">
       <div class="secbar" id="secbar"></div>
       <div class="qwrap" id="qwrap">
-        <div class="qmeta">
-          <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
-          <span class="qsubj-lbl" id="qsubjLbl">—</span>
-          <span class="qmarks-lbl">+2 / −0.67</span>
+        <!-- Left column: meta + image -->
+        <div class="q-left-col">
+          <div class="qmeta">
+            <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
+            <span class="qsubj-lbl" id="qsubjLbl">—</span>
+            <span class="qmarks-lbl">+2 / −0.67</span>
+          </div>
+          <div class="qimg-panel">
+            <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
+          </div>
         </div>
-        <div class="qimg-panel">
-          <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
-        </div>
-        <div class="opt-panel">
-          <div class="optgrid" id="optgrid"></div>
+        <!-- Right column: fixed width options -->
+        <div class="q-right-col">
+          <div class="opt-panel">
+            <div class="optgrid" id="optgrid"></div>
+          </div>
         </div>
       </div>
       <div class="abar">
