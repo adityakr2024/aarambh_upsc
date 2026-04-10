@@ -151,7 +151,7 @@
 <!-- ══════════════════════════════════════════════
      STATE: LOADING (Premium Experience)
 ═══════════════════════════════════════════════════ -->
-<div id="state-loading" class="min-h-[70vh] flex flex-col items-center justify-center gap-6 px-4">
+<div id="state-loading" class="min-h-screen flex flex-col items-center justify-center gap-6 px-4">
   <!-- Premium spinner with soft glow -->
   <div class="relative">
     <div class="absolute inset-0 bg-[#1e40af] opacity-10 rounded-full blur-xl animate-pulse"></div>
@@ -770,6 +770,12 @@ function showState(name) {
   states.forEach(function(s) {
     document.getElementById('state-' + s).style.display = s === name ? 'block' : 'none';
   });
+
+  // Hide footer when loading, show otherwise
+  var footer = document.querySelector('footer');
+  if (footer) {
+    footer.style.display = (name === 'loading') ? 'none' : '';
+  }
 }
 
 function setLoadingMsg(msg) {
