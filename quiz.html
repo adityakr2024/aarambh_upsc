@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
-    /* (CSS unchanged except for .q-left-col and .q-right-col widths) */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --navy:#0f1f3d;--navy2:#162c52;--blue:#1e3a8a;--blue2:#2563eb;
@@ -82,16 +81,16 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper */
-    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:flex;gap:20px;align-items:flex-start}
+    /* Question wrapper: meta row + columns */
+    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
     .qmeta{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
     .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
     .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
     .qmarks-lbl{font-size:12px;color:var(--gray)}
 
-    /* Left column: image panel — reduced width by 20% (flex:0.8) */
-    .q-left-col{flex:0.8;min-width:0;display:flex;flex-direction:column;gap:10px}
-    /* Right column: options panel — increased width by 20% (from 320px to 384px) */
+    /* Left column: image panel */
+    .q-left-col{flex:0.8;min-width:0;}
+    /* Right column: fixed options */
     .q-right-col{width:384px;flex-shrink:0;}
 
     /* Image panel */
@@ -259,7 +258,7 @@
   </style>
 </head>
 <body>
-<!-- (Loader, modals, error, result, shell same) -->
+<!-- Loader, modals, error, result, shell -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -353,12 +352,12 @@
     <div class="qmain">
       <div class="secbar" id="secbar"></div>
       <div class="qwrap" id="qwrap">
+        <div class="qmeta">
+          <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
+          <span class="qsubj-lbl" id="qsubjLbl">—</span>
+          <span class="qmarks-lbl">+2 / −0.67</span>
+        </div>
         <div class="q-left-col">
-          <div class="qmeta">
-            <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
-            <span class="qsubj-lbl" id="qsubjLbl">—</span>
-            <span class="qmarks-lbl">+2 / −0.67</span>
-          </div>
           <div class="qimg-panel">
             <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
           </div>
@@ -417,7 +416,7 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 const DURATION_SEC = 7200;
-const SHOW_SECTIONS = true;
+const SHOW_SECTIONS = true;   // Set to false to hide subject tabs
 
 const LS_SAVE_MS    = 30_000;
 const CLOUD_SYNC_MS = 300_000;
