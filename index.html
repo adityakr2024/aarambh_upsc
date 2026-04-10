@@ -149,26 +149,26 @@
 </header>
 
 <!-- ══════════════════════════════════════════════
-     STATE: LOADING (Perfectly Centered Overlay)
+     STATE: LOADING (Absolutely Centered Overlay)
 ═══════════════════════════════════════════════════ -->
-<div id="state-loading" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center px-4">
-  <div class="flex flex-col items-center justify-center gap-8 text-center max-w-md w-full mx-auto">
+<div id="state-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; text-align: center; max-width: 28rem; width: 100%;">
     
     <!-- Premium Spinner with glow -->
-    <div class="relative">
-      <div class="absolute inset-0 bg-[#1e40af] opacity-10 rounded-full blur-3xl animate-pulse"></div>
+    <div style="position: relative;">
+      <div style="position: absolute; inset: 0; background: #1e40af; opacity: 0.1; border-radius: 9999px; filter: blur(24px); animation: pulse 2s infinite;"></div>
       <div class="spinner-premium"></div>
     </div>
 
     <!-- Dynamic text -->
     <div>
-      <p id="loading-title" class="text-2xl font-semibold text-slate-800">Just a moment</p>
-      <p id="loading-subtitle" class="text-sm text-slate-500 mt-1">Preparing your dashboard</p>
+      <p id="loading-title" style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin: 0;">Just a moment</p>
+      <p id="loading-subtitle" style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Preparing your dashboard</p>
     </div>
 
-    <!-- Wider, smoother progress bar -->
-    <div class="w-80 max-w-[280px] h-2 bg-slate-200 rounded-3xl overflow-hidden">
-      <div class="h-full bg-gradient-to-r from-[#1e40af] to-[#3b82f6] rounded-3xl animate-loading-bar"></div>
+    <!-- Progress bar -->
+    <div style="width: 20rem; max-width: 280px; height: 0.5rem; background: #e2e8f0; border-radius: 1.5rem; overflow: hidden;">
+      <div style="height: 100%; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 1.5rem; animation: loading-bar 1.8s ease-in-out infinite;"></div>
     </div>
 
   </div>
