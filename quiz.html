@@ -20,7 +20,7 @@
       html,body { overflow: auto; }
     }
 
-    /* Overlays, modals, loader */
+    /* Overlays, modals, loader (unchanged) */
     .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
     .overlay.show{display:flex}
     #loader{z-index:300;flex-direction:column;background:var(--navy)}
@@ -71,8 +71,8 @@
     .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
     .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-    /* Body grid */
-    .qbody{flex:1;display:grid;grid-template-columns:1fr 280px;min-height:0}
+    /* Body grid — sidebar width increased by 10% (from 280px to 308px) */
+    .qbody{flex:1;display:grid;grid-template-columns:1fr 308px;min-height:0}
 
     /* Main panel */
     .qmain{display:flex;flex-direction:column;min-height:0;background:#fff}
@@ -81,14 +81,14 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper: image panel width reduced by ~10% */
-    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:grid;grid-template-columns:0.9fr 1.1fr;gap:20px;align-items:start}
+    /* Question wrapper: image panel ~10% less width, options panel wider */
+    .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:grid;grid-template-columns:0.8fr 1.2fr;gap:20px;align-items:start}
     .qmeta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
     .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
     .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
     .qmarks-lbl{font-size:12px;color:var(--gray)}
 
-    /* Image panel — fixed aspect ratio to prevent layout shift */
+    /* Image panel — fixed width, fluid height based on image */
     .qimg-panel{
       background:#fafcff;
       border-radius:14px;
@@ -97,32 +97,27 @@
       height: auto;
     }
     .qimg-box{
-      position: relative;
       width:100%;
-      aspect-ratio: 16 / 9;        /* fixed box, no flicker */
       border-radius:10px;
       background:#fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     .qimg-box img{
       width:100%;
-      height:100%;
-      object-fit: contain;         /* keeps aspect ratio, fits within box */
+      height:auto;            /* fluid height */
       display:block;
       border-radius:6px;
-      background: #fff;
+      box-shadow:0 2px 6px rgba(0,0,0,0.02);
     }
     .img-msg, .img-err{
-      position: absolute;
       font-size:13px;
       color:var(--gray);
       text-align:center;
       padding:20px;
+      background: #fff;
+      border-radius: 10px;
     }
 
-    /* Options panel */
+    /* Options panel — slightly narrower now */
     .opt-panel{
       background:#fff;
       border-radius:14px;
@@ -158,32 +153,32 @@
     .bsubmit{padding:10px 24px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
     .bsubmit:hover{background:#15803d}
 
-    /* Sidebar */
+    /* Sidebar (wider) */
     .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-    .sb-usr{background:var(--navy);padding:12px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-    .sb-av{width:36px;height:36px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+    .sb-usr{background:var(--navy);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .sb-av{width:38px;height:38px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
     .sb-nm{font-size:13px;font-weight:600;color:#fff;line-height:1.3}
     .sb-em{font-size:10px;color:#64748b}
-    .sb-leg{padding:10px 12px;border-bottom:1px solid var(--border);background:#fafafa;flex-shrink:0}
-    .sb-leg h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:8px}
+    .sb-leg{padding:12px 14px;border-bottom:1px solid var(--border);background:#fafafa;flex-shrink:0}
+    .sb-leg h4{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:8px}
     .leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-    .leg-row{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)}
-    .leg-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+    .leg-row{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--text2)}
+    .leg-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
     .ld-nv{background:var(--st-nv);color:var(--text2)}.ld-na{background:var(--st-na);color:#fff}.ld-ans{background:var(--st-ans);color:#fff}.ld-mrk{background:var(--st-mrk);color:#fff}.ld-ma{background:var(--st-ma);color:#fff}
-    .sb-pal{flex:1;overflow-y:auto;padding:10px 10px}
-    .sb-pal h4{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:10px}
-    .pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-    .pal-btn{aspect-ratio:1;border:none;border-radius:50%;font-size:11px;font-weight:700;cursor:pointer;transition:all .1s;font-family:'IBM Plex Mono',monospace;position:relative}
+    .sb-pal{flex:1;overflow-y:auto;padding:12px 12px}
+    .sb-pal h4{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:12px}
+    .pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .pal-btn{aspect-ratio:1;border:none;border-radius:50%;font-size:12px;font-weight:700;cursor:pointer;transition:all .1s;font-family:'IBM Plex Mono',monospace;position:relative}
     .pal-btn.st-nv{background:var(--st-nv);color:var(--text2)}.pal-btn.st-na{background:var(--st-na);color:#fff}.pal-btn.st-ans{background:var(--st-ans);color:#fff}.pal-btn.st-mrk{background:var(--st-mrk);color:#fff}.pal-btn.st-ma{background:var(--st-ma);color:#fff}
     .pal-btn.current{box-shadow:0 0 0 3px var(--blue2);z-index:1}
-    .pal-btn.st-mrk::after,.pal-btn.st-ma::after{content:'';position:absolute;top:-2px;right:-2px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1px solid #fff}
-    .sb-sum{border-top:1px solid var(--border);background:#fafafa;padding:10px 10px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .pal-btn.st-mrk::after,.pal-btn.st-ma::after{content:'';position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:var(--accent);border-radius:50%;border:1px solid #fff}
+    .sb-sum{border-top:1px solid var(--border);background:#fafafa;padding:12px 12px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
     .sum-cell{text-align:center}
-    .sum-val{font-size:17px;font-weight:700;font-family:'IBM Plex Mono',monospace}
-    .sum-lbl{font-size:9px;text-transform:uppercase;color:var(--gray);letter-spacing:.3px}
+    .sum-val{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+    .sum-lbl{font-size:9.5px;text-transform:uppercase;color:var(--gray);letter-spacing:.3px}
     .s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
 
-    /* Result screen */
+    /* Result screen (unchanged) */
     #resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
     #resscreen.show{display:flex}
     .rh{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
@@ -218,9 +213,10 @@
     .rqfoot{padding:0 20px 16px}
     .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
-    /* ─── RESPONSIVE ─────────────────── */
+    /* Responsive */
     @media (max-width: 900px) {
-      .qbody { grid-template-columns: 1fr 260px; }
+      .qbody { grid-template-columns: 1fr 280px; }
+      .qwrap { grid-template-columns: 0.9fr 1.1fr; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -237,7 +233,6 @@
         padding: 16px;
       }
       .qimg-panel { padding: 10px; }
-      .qimg-box { aspect-ratio: 16 / 9; }  /* keep stable */
       .opt-panel { padding: 12px; }
       .optgrid { grid-template-columns: 1fr; gap: 8px; }
       .opt-btn { padding: 14px; }
@@ -431,7 +426,7 @@ const S = {
   sessionKey:'',
   handles:{ timer:null, ls:null, cloud:null },
   reviewMode: false,
-  preloadCache: new Map(),   // simple image preload cache
+  preloadCache: new Map(),
 };
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -496,7 +491,6 @@ async function fetchQs() {
     if (d.status !== 'success') { showErr('Test Not Found', d.message || 'Quiz Engine error.'); return false; }
     S.questions = (d.questions||[]).filter(q => q.correct && q.questionImg);
     if (!S.questions.length) { showErr('No Questions','This test has no questions.'); return false; }
-    // preload first few images
     preloadAdjacent(0);
     return true;
   } catch(e) { showErr('Network Error','Could not load questions.'); return false; }
@@ -609,7 +603,6 @@ function jumpSub(sub) {
   const i=S.questions.findIndex(q=>q.subject===sub); if(i>-1) goTo(i);
 }
 
-// Preload images around current index to reduce flicker
 function preloadAdjacent(idx) {
   const urls = [];
   if (idx > 0) urls.push(S.questions[idx-1]?.questionImg);
@@ -633,11 +626,9 @@ function renderQ(idx) {
   el('prevBtn').disabled=idx===0;
   el('nextBtn').disabled=idx===n-1;
 
-  // Preload neighbours
   preloadAdjacent(idx);
 
   const box=el('qimgBox');
-  // Keep stable container: show loading message inside the aspect-ratio box
   box.innerHTML = '<span class="img-msg">Loading…</span>';
   if(q.questionImg){
     const cached = S.preloadCache.get(q.questionImg);
