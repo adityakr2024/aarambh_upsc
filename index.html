@@ -414,7 +414,6 @@
      JAVASCRIPT
 ═══════════════════════════════════════════════════ -->
 <script>
-  
 // ─────────────────────────────────────────────────
 var GOOGLE_CLIENT_ID = "1075233010167-2816dumqer76a3s4rki9t59ea2hu3ual.apps.googleusercontent.com";
 var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmPY2MYqbEjZvBmw4UpTIkiCCOSwDUoGGdjqFVHzvVrLDR_j3KjgbaQ/exec";
@@ -422,7 +421,7 @@ var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmP
 
 var _idToken = null;
 
-// Show initial state
+// On page load: try to restore session from localStorage
 window.addEventListener('load', function() {
   if (typeof google !== 'undefined' && google.accounts) {
     initGoogleSignIn();
@@ -434,8 +433,53 @@ window.addEventListener('load', function() {
       }
     }, 200);
   }
-  showState('signed-out');
+
+  // Attempt to restore previous session
+  restoreSession();
 });
+
+function restoreSession() {
+  var storedToken = localStorage.getItem('aarambh_id_token');
+  if (!storedToken) {
+    showState('signed-out');
+    return;
+  }
+
+  _idToken = storedToken;
+  showState('loading');
+  setLoadingMsg('Restoring your session…');
+
+  callAPI('verifyLogin', { idToken: _idToken })
+    .then(function(userData) {
+      if (userData.status === 'success') {
+        setLoadingMsg('Loading your dashboard…');
+        return callAPI('getLatestAttempts', { idToken: _idToken })
+          .then(function(historyData) {
+            renderDashboard(userData, historyData.attempts || []);
+            showState('dashboard');
+            showUserPill(userData.userName, userData.userEmail);
+          });
+      } else if (userData.status === 'not_registered') {
+        renderNotRegistered(userData);
+        showState('not-registered');
+        showUserPill('Not Registered', userData.detectedEmail);
+      } else {
+        // Token invalid or expired
+        clearStoredToken();
+        showState('signed-out');
+      }
+    })
+    .catch(function(err) {
+      console.warn('Session restore failed:', err);
+      clearStoredToken();
+      showState('signed-out');
+    });
+}
+
+function clearStoredToken() {
+  localStorage.removeItem('aarambh_id_token');
+  _idToken = null;
+}
 
 function initGoogleSignIn() {
   google.accounts.id.initialize({
@@ -445,12 +489,14 @@ function initGoogleSignIn() {
     cancel_on_tap_outside: true
   });
 
-  google.accounts.id.prompt((notification) => {
-    // Optional: Log if prompt isn't displayed (for debugging only)
-    if (notification.isNotDisplayed()) {
-      console.log('One Tap not shown – user may need to click sign-in button.');
-    }
-  });
+  // Only show One Tap if no stored session exists
+  if (!localStorage.getItem('aarambh_id_token')) {
+    google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed()) {
+        console.log('One Tap not shown – user may need to click sign-in button.');
+      }
+    });
+  }
 }
 
 function triggerGoogleSignIn() {
@@ -481,6 +527,9 @@ function triggerGoogleSignIn() {
 
 async function handleCredentialResponse(response) {
   _idToken = response.credential;
+  // Store token for future page reloads
+  localStorage.setItem('aarambh_id_token', _idToken);
+
   showState('loading');
   setLoadingMsg('Verifying your account…');
 
@@ -501,6 +550,7 @@ async function handleCredentialResponse(response) {
 
     } else {
       alert('Error: ' + (userData.message || 'Unknown error. Please try again.'));
+      clearStoredToken();
       showState('signed-out');
     }
 
@@ -512,6 +562,7 @@ async function handleCredentialResponse(response) {
       window._loadingInterval = null;
     }
     alert('Could not connect to server. Please check your internet and try again.\n\nDetails: ' + err.message);
+    clearStoredToken();
     showState('signed-out');
   }
 }
@@ -574,22 +625,17 @@ function renderDashboard(user, attempts) {
       var card = document.createElement('div');
       card.className = 'product-card' + (p.isLocked ? ' locked' : '');
 
-      // Use tests[] array from backend (new). Fall back gracefully if absent.
       var tests = (p.tests && p.tests.length > 0) ? p.tests : null;
       var testCount = tests ? tests.length : (parseInt(p.totalTests) || 1);
 
-      // Build bottom action area
       var actionHtml = '';
       if (p.isLocked) {
-        // Locked: show support message regardless of test count
         actionHtml =
           '<div class="flex items-center justify-between">' +
             '<span class="text-xs text-slate-400">' + testCount + ' Quiz' + (testCount !== 1 ? 'zes' : '') + '</span>' +
             '<span class="text-xs text-amber-600 font-medium">Contact support to activate</span>' +
           '</div>';
-
       } else if (!tests || tests.length <= 1) {
-        // Single test product (F1_FREE or any 1-test product)
         var t0       = tests ? tests[0] : null;
         var tNum     = t0 ? t0.testNumber : 1;
         var tName    = t0 ? t0.testName  : (p.isFree ? 'Free Mock Quiz' : 'Test 1');
@@ -601,9 +647,7 @@ function renderDashboard(user, attempts) {
             '<span class="text-xs text-slate-400">' + testCount + ' Quiz</span>' +
             '<a href="' + singleLink + '" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">Start Quiz →</a>' +
           '</div>';
-
       } else {
-        // Bundle: render one clickable row per test from tests[]
         var rows = tests.map(function(t) {
           var tLink = 'quiz.html?productId=' + encodeURIComponent(p.id) +
                       '&testNumber=' + t.testNumber +
@@ -638,7 +682,6 @@ function renderDashboard(user, attempts) {
   }
 
   var wrap = document.getElementById('quiz-history-wrap');
-
   if (attempts.length === 0) {
     wrap.innerHTML =
       '<div class="p-10 text-center">' +
@@ -647,8 +690,6 @@ function renderDashboard(user, attempts) {
         '<p class="text-slate-400 text-sm mt-1">Attempt a quiz to see your scorecard here.</p>' +
       '</div>';
   } else {
-    // Build a lookup: productId + testNumber → attempt
-    // So we can match each attempt to its test card
     var attemptMap = {};
     attempts.forEach(function(a) {
       attemptMap[a.productId + '|' + a.testNumber] = a;
@@ -663,10 +704,8 @@ function renderDashboard(user, attempts) {
       var score    = parseFloat(a.score)  || 0;
       var maxMarks = total * 2;
 
-      // Colour the score circle based on percentage
       var circleColor = pct >= 66 ? '#16a34a' : pct >= 40 ? '#d97706' : '#dc2626';
 
-      // "Start Again" link
       var retakeLink = 'quiz.html?productId=' + encodeURIComponent(a.productId) +
                        '&testNumber=' + encodeURIComponent(a.testNumber) +
                        '&testName='   + encodeURIComponent(a.testName);
@@ -677,8 +716,6 @@ function renderDashboard(user, attempts) {
 
       return (
         '<div class="bg-white rounded-2xl border border-slate-100 p-5 mb-4">' +
-
-          // Header row: test name + date
           '<div class="flex items-center justify-between mb-4">' +
             '<div>' +
               '<p class="text-xs font-semibold text-[#1e40af] uppercase tracking-wider mb-0.5">' + escHtml(a.productId) + '</p>' +
@@ -686,41 +723,28 @@ function renderDashboard(user, attempts) {
             '</div>' +
             '<span class="text-xs text-slate-400">Last: ' + lastDate + '</span>' +
           '</div>' +
-
-          // Score + stats grid
           '<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">' +
-
-            // Correct
             '<div class="bg-green-50 rounded-xl p-3 text-center">' +
               '<p class="text-xs font-semibold text-green-700 mb-1">✓ Correct</p>' +
               '<p class="text-xl font-bold text-green-700">' + correct + '<span class="text-xs font-normal text-green-500"> / ' + total + '</span></p>' +
               '<p class="text-xs text-green-600 mt-0.5">+' + (correct * 2) + ' marks</p>' +
             '</div>' +
-
-            // Wrong
             '<div class="bg-red-50 rounded-xl p-3 text-center">' +
               '<p class="text-xs font-semibold text-red-700 mb-1">✗ Wrong</p>' +
               '<p class="text-xl font-bold text-red-700">' + wrong + '<span class="text-xs font-normal text-red-400"> / ' + total + '</span></p>' +
               '<p class="text-xs text-red-600 mt-0.5">−' + (Math.round(wrong * 2/3 * 100)/100) + ' marks</p>' +
             '</div>' +
-
-            // Skipped
             '<div class="bg-slate-50 rounded-xl p-3 text-center">' +
               '<p class="text-xs font-semibold text-slate-600 mb-1">— Skipped</p>' +
               '<p class="text-xl font-bold text-slate-600">' + skipped + '<span class="text-xs font-normal text-slate-400"> / ' + total + '</span></p>' +
               '<p class="text-xs text-slate-500 mt-0.5">0 marks</p>' +
             '</div>' +
-
-            // Score
             '<div class="bg-blue-50 rounded-xl p-3 text-center">' +
               '<p class="text-xs font-semibold text-[#1e40af] mb-1">Score</p>' +
               '<p class="text-xl font-bold text-[#1e40af]">' + score + '<span class="text-xs font-normal text-blue-400"> / ' + maxMarks + '</span></p>' +
               '<p class="text-xs text-blue-600 mt-0.5">' + pct.toFixed(1) + '%</p>' +
             '</div>' +
-
           '</div>' +
-
-          // Bottom row: accuracy + time + retake button (now replaced with two buttons)
           '<div class="flex items-center justify-between flex-wrap gap-2">' +
             '<div class="flex gap-4">' +
               '<div class="text-center">' +
@@ -749,7 +773,6 @@ function renderDashboard(user, attempts) {
               '</a>' +
             '</div>' +
           '</div>' +
-
         '</div>'
       );
     }).join('');
@@ -760,7 +783,6 @@ function renderDashboard(user, attempts) {
 
 // ── UI helpers ─────────────────────────────────────────────────────────────
 function showState(name) {
-  // Clear loading message interval if it exists
   if (window._loadingInterval) {
     clearInterval(window._loadingInterval);
     window._loadingInterval = null;
@@ -771,7 +793,6 @@ function showState(name) {
     document.getElementById('state-' + s).style.display = s === name ? 'block' : 'none';
   });
 
-  // Hide footer when loading, show otherwise
   var footer = document.querySelector('footer');
   if (footer) {
     footer.style.display = (name === 'loading') ? 'none' : '';
@@ -779,7 +800,6 @@ function showState(name) {
 }
 
 function setLoadingMsg(msg) {
-  // The msg parameter is kept for backward compatibility but we use our own cycle.
   const titles = [
     { title: "Just a moment", subtitle: "Preparing your dashboard" },
     { title: "Almost there", subtitle: "Loading your progress" },
@@ -792,18 +812,15 @@ function setLoadingMsg(msg) {
   const subtitleEl = document.getElementById('loading-subtitle');
   
   if (titleEl && subtitleEl) {
-    // Set initial message
     titleEl.textContent = titles[0].title;
     subtitleEl.textContent = titles[0].subtitle;
     
-    // Cycle messages every 1.8 seconds
     const interval = setInterval(() => {
       idx = (idx + 1) % titles.length;
       titleEl.textContent = titles[idx].title;
       subtitleEl.textContent = titles[idx].subtitle;
     }, 1800);
     
-    // Store interval globally so we can clear it later
     window._loadingInterval = interval;
   }
 }
@@ -819,6 +836,7 @@ function showUserPill(name, email) {
 
 function signOut() {
   _idToken = null;
+  clearStoredToken();
   if (typeof google !== 'undefined' && google.accounts) {
     google.accounts.id.disableAutoSelect();
   }
