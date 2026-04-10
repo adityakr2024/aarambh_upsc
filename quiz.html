@@ -81,46 +81,44 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper: meta row + columns */
+    /* Question wrapper */
     .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
-    .qmeta{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-    .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
-    .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
-    .qmarks-lbl{font-size:12px;color:var(--gray)}
+    /* Fixed meta area — prevents shift */
+    .qmeta{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;height:32px;} 
+    .qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
+    .qmarks-lbl{font-size:13px;color:var(--gray);font-weight:500}
 
-    /* Left column: image panel */
-    .q-left-col{flex:0.8;min-width:0;}
-    /* Right column: fixed options */
+    /* Left column: image panel — fixed width 501px */
+    .q-left-col{width:501px;flex-shrink:0;}
+    /* Right column: options panel */
     .q-right-col{width:384px;flex-shrink:0;}
 
-    /* Image panel */
+    /* Image panel — NO outline, border, background */
     .qimg-panel{
-      background:#fafcff;
-      border-radius:14px;
-      border:1px solid var(--border);
-      padding:14px;
-      height: auto;
       width:100%;
+      height: auto;
+      background: transparent;
+      border: none;
+      padding: 0;
     }
     .qimg-box{
       width:100%;
-      border-radius:10px;
-      background:#fff;
+      background: transparent;
+      display: block;
     }
     .qimg-box img{
       width:100%;
       height:auto;
       display:block;
-      border-radius:6px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.02);
+      border-radius: 0;
+      box-shadow: none;
     }
     .img-msg, .img-err{
-      font-size:13px;
+      font-size:14px;
       color:var(--gray);
-      text-align:center;
-      padding:20px;
-      background: #fff;
-      border-radius: 10px;
+      text-align:left;
+      padding: 12px 0;
+      background: transparent;
     }
 
     /* Options panel */
@@ -221,9 +219,14 @@
     .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
     /* Responsive */
+    @media (max-width: 1100px) {
+      .q-left-col { width: 450px; }
+      .q-right-col { width: 340px; }
+    }
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 280px; }
-      .q-right-col { width: 320px; }
+      .q-left-col { width: 400px; }
+      .q-right-col { width: 300px; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -235,7 +238,7 @@
       .btn-exit { padding: 4px 10px; }
       
       .qwrap { flex-direction: column; padding: 16px; }
-      .q-left-col { width: 100%; flex: auto; }
+      .q-left-col { width: 100%; }
       .q-right-col { width: 100%; }
       .optgrid { grid-template-columns: 1fr; gap: 8px; }
       .opt-btn { padding: 14px; }
@@ -248,7 +251,7 @@
     }
     @media (max-width: 480px) {
       .qwrap { padding: 12px; }
-      .qmeta { flex-wrap: wrap; gap: 6px; }
+      .qmeta { height: auto; flex-wrap: wrap; gap: 6px; }
       .qnum-lbl { font-size: 13px; }
       .opt-circle { width: 32px; height: 32px; font-size: 14px; }
       .opt-lbl-txt { font-size: 13px; }
@@ -258,7 +261,7 @@
   </style>
 </head>
 <body>
-<!-- Loader, modals, error, result, shell -->
+<!-- Loader, modals, error, result, shell same as before -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -354,7 +357,6 @@
       <div class="qwrap" id="qwrap">
         <div class="qmeta">
           <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
-          <span class="qsubj-lbl" id="qsubjLbl">—</span>
           <span class="qmarks-lbl">+2 / −0.67</span>
         </div>
         <div class="q-left-col">
@@ -416,7 +418,7 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 const DURATION_SEC = 7200;
-const SHOW_SECTIONS = true;   // Set to false to hide subject tabs
+const SHOW_SECTIONS = true;   // subject tabs still possible but subject label in meta removed
 
 const LS_SAVE_MS    = 30_000;
 const CLOUD_SYNC_MS = 300_000;
@@ -628,7 +630,7 @@ function renderQ(idx) {
   S.currentQ=idx; S.visited[idx]=true;
   const q=S.questions[idx], n=S.questions.length;
   el('qnumLbl').textContent=`Question ${idx+1} of ${n}`;
-  el('qsubjLbl').textContent=q.subject||'General Studies';
+  // subject label removed from meta, but can be kept in palette if needed
   el('navlbl').textContent=`Q ${idx+1} / ${n}`;
   el('prevBtn').disabled=idx===0;
   el('nextBtn').disabled=idx===n-1;
