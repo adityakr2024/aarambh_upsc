@@ -41,6 +41,9 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .btn-danger{background:var(--red)!important}
 .submit-warn{font-size:12.5px;color:var(--red);padding:10px 14px;background:#fef2f2;border-radius:8px;margin-top:8px}
 
+/* ── Exit modal ─────────────────── */
+#exitModal .mcard h3{color:var(--red)}
+
 /* ── Error screen ─────────────────── */
 #errScreen{display:none;position:fixed;inset:0;z-index:400;background:var(--navy);flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;color:#fff}
 #errScreen.show{display:flex}
@@ -57,7 +60,7 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .tb-brand{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.4px}
 .tb-brand span{color:var(--accent)}
 .tb-test{font-size:11px;color:#64748b;background:var(--navy2);padding:3px 10px;border-radius:20px;font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tb-right{display:flex;align-items:center;gap:12px}
+.tb-right{display:flex;align-items:center;gap:10px}
 .tb-user{font-size:12px;color:#94a3b8;text-align:right;line-height:1.4}
 .tb-user strong{display:block;color:#cbd5e1;font-size:13px}
 .timer{background:var(--navy2);border:1.5px solid #334155;border-radius:8px;padding:5px 14px;font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:2px;min-width:88px;text-align:center;transition:border-color .3s,color .3s}
@@ -68,33 +71,69 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .sync-dot.saving{background:var(--accent);animation:pd 1s infinite}
 .sync-dot.saved{background:var(--green)}
 @keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+/* Exit button in topbar */
+.tb-exit{padding:6px 14px;background:transparent;border:1.5px solid #475569;border-radius:7px;font-family:inherit;font-size:12px;font-weight:600;color:#94a3b8;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb-exit:hover{border-color:var(--red);color:#fca5a5;background:rgba(220,38,38,.15)}
 
 /* Body grid */
 .qbody{flex:1;display:grid;grid-template-columns:1fr 296px;min-height:0}
 
 /* Main panel */
 .qmain{display:flex;flex-direction:column;min-height:0;background:#fff}
-.secbar{background:#f8fafc;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;flex-shrink:0;padding:0 4px}
+
+/* Section bar row — contains tabs + toggle */
+.secbar-row{background:#f8fafc;border-bottom:1px solid var(--border);display:flex;align-items:center;flex-shrink:0}
+.secbar{display:flex;overflow-x:auto;flex:1;padding:0 4px}
 .secbar::-webkit-scrollbar{height:0}
 .sec-tab{padding:10px 18px;font-size:12.5px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
 .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
-.qwrap{flex:1;overflow-y:auto;padding:20px 24px}
-.qmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
+/* Subject label shown on question */
 .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
-.qmarks-lbl{font-size:12px;color:var(--gray)}
-.qimg-box{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;margin-bottom:20px;min-height:120px;display:flex;align-items:center;justify-content:center}
-.qimg-box img{max-width:100%;max-height:52vh;object-fit:contain;border-radius:6px;display:block;margin:0 auto}
-.img-msg{font-size:13px;color:var(--gray)}
-.img-err{font-size:13px;color:var(--red)}
+.qsubj-lbl.hidden{display:none!important}
 
-/* Options — A B C D only (content is in question image) */
-.optgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:400px;margin:0 auto}
-.opt-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 20px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+/* ── Question pane ─────────────────── */
+.qwrap{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:0}
+.qmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-shrink:0}
+.qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
+.qmarks-lbl{font-size:12px;color:var(--gray)}
+
+/* Two-column content area: image left, options right */
+.qcontent{display:flex;gap:20px;flex:1;min-height:0;align-items:flex-start}
+
+/* Image column — fixed width ratio, variable height */
+.qimg-box{
+  flex:0 0 60%;width:60%;
+  background:#f8fafc;border:1px solid var(--border);border-radius:12px;
+  padding:14px;overflow:hidden;
+  display:flex;align-items:flex-start;justify-content:center;
+  min-height:260px;
+}
+.qimg-box img{width:100%;height:auto;object-fit:contain;border-radius:6px;display:block;transition:opacity .25s ease}
+/* Skeleton shimmer — fills box while image loads, preserves layout */
+.img-skeleton{
+  width:100%;min-height:240px;border-radius:8px;
+  background:linear-gradient(90deg,#e8edf4 25%,#d4dae4 50%,#e8edf4 75%);
+  background-size:300% 100%;
+  animation:shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.img-err{font-size:13px;color:var(--red);padding:12px 0}
+.img-msg{font-size:13px;color:var(--gray);padding:12px 0}
+
+/* Options column — fixed width ratio, centered */
+.qopts-col{
+  flex:0 0 40%;width:40%;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+  padding:4px 0;
+  min-height:260px;
+}
+.opts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:12px}
+.optgrid{display:flex;flex-direction:column;gap:12px}
+.opt-btn{position:relative;display:flex;align-items:center;gap:14px;padding:16px 18px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
 .opt-btn:hover{border-color:var(--blue2);background:#eff6ff}
 .opt-btn.sel{border-color:var(--blue2);background:#dbeafe}
 .opt-btn input{position:absolute;opacity:0;pointer-events:none}
-.opt-circle{width:36px;height:36px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--text2);transition:all .15s}
+.opt-circle{width:38px;height:38px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--text2);transition:all .15s;flex-shrink:0}
 .opt-btn.sel .opt-circle{background:var(--blue2);color:#fff}
 .opt-lbl-txt{font-size:14px;font-weight:600;color:var(--text2)}
 .opt-btn.sel .opt-lbl-txt{color:var(--blue2)}
@@ -115,8 +154,6 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .bnav:hover:not(:disabled){border-color:var(--blue2);color:var(--blue2)}
 .bnav:disabled{opacity:.35;cursor:default}
 .navlbl{font-size:12.5px;color:var(--gray);font-weight:500}
-.bsubmit{padding:10px 26px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
-.bsubmit:hover{background:#15803d}
 
 /* ── Sidebar ──────────────────────── */
 .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
@@ -144,6 +181,11 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
 .sb-bsubmit{margin:0 14px 14px;padding:12px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;flex-shrink:0}
 .sb-bsubmit:hover{background:#15803d}
+/* Section visibility toggle */
+.sec-toggle-btn{flex-shrink:0;margin:0 8px;padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;font-family:inherit;background:#fff;color:var(--gray);cursor:pointer;white-space:nowrap;transition:all .15s}
+.sec-toggle-btn:hover{border-color:var(--blue2);color:var(--blue2)}
+.secbar-row.sections-hidden .sec-toggle-btn{border-color:var(--accent);color:var(--orange);background:#fffbeb}
+.secbar-row.sections-hidden .secbar{display:none!important}
 
 /* ── Result screen ────────────────── */
 #resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
@@ -180,11 +222,15 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 .rqfoot{padding:0 20px 16px}
 .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
+@media(max-width:900px){
+  .qcontent{flex-direction:column}
+  .qimg-box{flex:none;width:100%}
+  .qopts-col{flex:none;width:100%;min-height:auto}
+}
 @media(max-width:768px){
   .qbody{grid-template-columns:1fr}
   .qsidebar{display:none}
   .tb-user{display:none}
-  .optgrid{max-width:100%}
   .res-stats{grid-template-columns:1fr 1fr}
   .score-card{padding:28px 20px}
 }
@@ -211,6 +257,19 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
     <div class="modal-actions">
       <button class="btn-sec btn-danger" onclick="startFresh()">Start Fresh</button>
       <button class="btn-pri" onclick="resumeSession()">Resume →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXIT MODAL -->
+<div id="exitModal" class="overlay">
+  <div class="mcard">
+    <h3 style="color:var(--red)">⚠ Exit Quiz?</h3>
+    <p>Your progress has been auto-saved. You can resume this test later from the dashboard.</p>
+    <p style="color:var(--red);font-size:12px;margin-top:8px">⚠ The timer will <strong>not</strong> pause — time will keep running.</p>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeExitModal()">Stay in Quiz</button>
+      <button class="btn-pri btn-danger" onclick="doExit()">Save &amp; Exit →</button>
     </div>
   </div>
 </div>
@@ -283,20 +342,29 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
       <div class="tb-user"><strong id="tbName">Candidate</strong><span id="tbEmail">—</span></div>
       <div class="timer" id="timerEl">120:00</div>
       <div class="sync-dot" id="syncDot" title="Auto-save"></div>
+      <button class="tb-exit" onclick="confirmExit()">✕ Exit</button>
     </div>
   </div>
 
   <div class="qbody">
     <div class="qmain">
-      <div class="secbar" id="secbar"></div>
+      <div class="secbar-row" id="secbarRow">
+        <div class="secbar" id="secbar"></div>
+        <button class="sec-toggle-btn" id="secToggleBtn" onclick="toggleSections()">👁 Hide Subjects</button>
+      </div>
       <div class="qwrap" id="qwrap">
         <div class="qmeta">
           <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
           <span class="qsubj-lbl" id="qsubjLbl">—</span>
           <span class="qmarks-lbl">+2 / −0.67</span>
         </div>
-        <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
-        <div class="optgrid" id="optgrid"></div>
+        <div class="qcontent">
+          <div class="qimg-box" id="qimgBox"><div class="img-skeleton"></div></div>
+          <div class="qopts-col">
+            <div class="opts-label">Select your answer</div>
+            <div class="optgrid" id="optgrid"></div>
+          </div>
+        </div>
       </div>
       <div class="abar">
         <div class="bgrp">
@@ -308,10 +376,7 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
       <div class="navbar">
         <button class="bnav" id="prevBtn" onclick="navPrev()">◀ Prev</button>
         <span class="navlbl" id="navlbl">Q 1 / —</span>
-        <div style="display:flex;gap:8px">
-          <button class="bnav" id="nextBtn" onclick="navNext()">Next ▶</button>
-          <button class="bsubmit" onclick="showSubmitModal()">Submit Test</button>
-        </div>
+        <button class="bnav" id="nextBtn" onclick="navNext()">Next ▶</button>
       </div>
     </div>
 
@@ -349,6 +414,10 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 // ❷ Duration
 const DURATION_SEC = 7200; // 120 min
+
+// ❸ Section visibility — set false to hide subject tabs & labels (blind-mode)
+//    Students cannot jump by subject when false; subject names are hidden.
+const SHOW_SECTIONS = true;
 
 // Auto-save intervals
 const LS_SAVE_MS    = 30_000;   // localStorage every 30s
@@ -558,9 +627,19 @@ function setSyncDot(st) {
 // ─── SECTIONS ─────────────────────────────────────────────────────────────────
 function buildSections() {
   const subs=[...new Set(S.questions.map(q=>q.subject).filter(Boolean))];
-  const bar=el('secbar');
-  if(subs.length<=1){bar.style.display='none';return;}
-  bar.style.display='flex';
+  const row=el('secbarRow'), bar=el('secbar'), btn=el('secToggleBtn');
+  if(!SHOW_SECTIONS){
+    // Blind mode — hide everything section-related at boot
+    bar.style.display='none';
+    if(btn) btn.style.display='none';
+    row.style.display='none';
+    return;
+  }
+  if(subs.length<=1){
+    row.style.display='none';
+    return;
+  }
+  row.style.display='flex';
   bar.innerHTML=subs.map(s=>`<button class="sec-tab" data-s="${esc(s)}" onclick="jumpSub('${esc(s)}')">${esc(s)}</button>`).join('');
 }
 function updSecTabs() {
@@ -576,17 +655,25 @@ function renderQ(idx) {
   S.currentQ=idx; S.visited[idx]=true;
   const q=S.questions[idx], n=S.questions.length;
   el('qnumLbl').textContent=`Question ${idx+1} of ${n}`;
-  el('qsubjLbl').textContent=q.subject||'General Studies';
+  const subjEl=el('qsubjLbl');
+  subjEl.textContent=q.subject||'General Studies';
+  subjEl.classList.toggle('hidden',!SHOW_SECTIONS);
   el('navlbl').textContent=`Q ${idx+1} / ${n}`;
   el('prevBtn').disabled=idx===0;
   el('nextBtn').disabled=idx===n-1;
 
-  // Image (lazy load with placeholder)
+  // Image — skeleton keeps layout stable while loading, fades in on ready
   const box=el('qimgBox');
-  box.innerHTML='<span class="img-msg">Loading image…</span>';
+  box.innerHTML='<div class="img-skeleton"></div>';
   if(q.questionImg){
     const img=new Image();
-    img.onload=()=>{ box.innerHTML=''; const i=document.createElement('img'); i.src=img.src; i.alt=`Q${idx+1}`; box.appendChild(i); };
+    img.onload=()=>{
+      box.innerHTML='';
+      const i=document.createElement('img');
+      i.src=img.src; i.alt=`Q${idx+1}`; i.style.opacity='0';
+      box.appendChild(i);
+      requestAnimationFrame(()=>{ i.style.opacity='1'; });
+    };
     img.onerror=()=>{ box.innerHTML='<span class="img-err">⚠ Image failed to load. Refresh or check connection.</span>'; };
     img.src=q.questionImg;
   } else { box.innerHTML='<span class="img-err">No image for this question.</span>'; }
@@ -739,6 +826,20 @@ function buildReview(){
     }).join('');
     body.innerHTML+=`<div class="rq"><div class="rqh"><span class="rqn">Q${i+1} · ${esc(q.subject||'GS')}</span><span class="rq-lbl rqb-lbl ${bc}">${bt} · Correct: ${ca}</span></div><div class="rqbody">${q.questionImg?`<img src="${q.questionImg}" class="rqimg" alt="Q${i+1}">`:''}<div class="rq-opts">${opts}</div></div>${q.answerImg?`<div class="rqfoot"><div style="font-size:11px;color:var(--gray);font-weight:700;margin-bottom:6px;text-transform:uppercase">Solution</div><img src="${q.answerImg}" class="rqai" alt="Sol ${i+1}"></div>`:''}</div>`;
   });
+}
+
+// ─── EXIT ─────────────────────────────────────────────────────────────────────
+function confirmExit(){ if(!S.submitted&&S.questions.length>0) saveSess(); el('exitModal').classList.add('show'); }
+function closeExitModal(){ el('exitModal').classList.remove('show'); }
+function doExit(){ saveSess(); location.href='index.html'; }
+
+// ─── SECTION TOGGLE ───────────────────────────────────────────────────────────
+function toggleSections(){
+  const row=el('secbarRow'), btn=el('secToggleBtn');
+  const hidden=row.classList.toggle('sections-hidden');
+  btn.textContent=hidden?'👁 Show Subjects':'👁 Hide Subjects';
+  // Also hide/show subject label on current question
+  el('qsubjLbl').classList.toggle('hidden',hidden);
 }
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
