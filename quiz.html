@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    /* (CSS unchanged except for .q-left-col and .q-right-col widths) */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --navy:#0f1f3d;--navy2:#162c52;--blue:#1e3a8a;--blue2:#2563eb;
@@ -20,7 +21,7 @@
       html,body { overflow: auto; }
     }
 
-    /* Overlays, modals, loader (unchanged) */
+    /* Overlays, modals, loader */
     .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
     .overlay.show{display:flex}
     #loader{z-index:300;flex-direction:column;background:var(--navy)}
@@ -71,7 +72,7 @@
     .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
     .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-    /* Body grid — sidebar fixed 308px */
+    /* Body grid */
     .qbody{flex:1;display:grid;grid-template-columns:1fr 308px;min-height:0}
 
     /* Main panel */
@@ -81,19 +82,19 @@
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
     
-    /* Question wrapper: flex row with fixed options width */
+    /* Question wrapper */
     .qwrap{flex:1;overflow-y:auto;padding:20px 20px;display:flex;gap:20px;align-items:flex-start}
     .qmeta{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
     .qnum-lbl{font-size:14px;font-weight:700;color:var(--navy)}
     .qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
     .qmarks-lbl{font-size:12px;color:var(--gray)}
 
-    /* Left column: contains meta + image panel */
-    .q-left-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
-    /* Right column: fixed width options panel */
-    .q-right-col{width:320px;flex-shrink:0;}
+    /* Left column: image panel — reduced width by 20% (flex:0.8) */
+    .q-left-col{flex:0.8;min-width:0;display:flex;flex-direction:column;gap:10px}
+    /* Right column: options panel — increased width by 20% (from 320px to 384px) */
+    .q-right-col{width:384px;flex-shrink:0;}
 
-    /* Image panel — fixed width (full width of left column) fluid height */
+    /* Image panel */
     .qimg-panel{
       background:#fafcff;
       border-radius:14px;
@@ -160,7 +161,7 @@
     .bsubmit{padding:10px 24px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
     .bsubmit:hover{background:#15803d}
 
-    /* Sidebar (wider) */
+    /* Sidebar */
     .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
     .sb-usr{background:var(--navy);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
     .sb-av{width:38px;height:38px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
@@ -223,7 +224,7 @@
     /* Responsive */
     @media (max-width: 900px) {
       .qbody { grid-template-columns: 1fr 280px; }
-      .q-right-col { width: 280px; }
+      .q-right-col { width: 320px; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -235,7 +236,7 @@
       .btn-exit { padding: 4px 10px; }
       
       .qwrap { flex-direction: column; padding: 16px; }
-      .q-left-col { width: 100%; }
+      .q-left-col { width: 100%; flex: auto; }
       .q-right-col { width: 100%; }
       .optgrid { grid-template-columns: 1fr; gap: 8px; }
       .opt-btn { padding: 14px; }
@@ -258,7 +259,7 @@
   </style>
 </head>
 <body>
-<!-- Loader, modals, error, result, shell same as before -->
+<!-- (Loader, modals, error, result, shell same) -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -352,7 +353,6 @@
     <div class="qmain">
       <div class="secbar" id="secbar"></div>
       <div class="qwrap" id="qwrap">
-        <!-- Left column: meta + image -->
         <div class="q-left-col">
           <div class="qmeta">
             <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
@@ -363,7 +363,6 @@
             <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
           </div>
         </div>
-        <!-- Right column: fixed width options -->
         <div class="q-right-col">
           <div class="opt-panel">
             <div class="optgrid" id="optgrid"></div>
