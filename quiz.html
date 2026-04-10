@@ -1,240 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aarambh UPSC – Online Test</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --navy:#0f1f3d;--navy2:#162c52;--blue:#1e3a8a;--blue2:#2563eb;
-  --accent:#f59e0b;--green:#16a34a;--red:#dc2626;--purple:#7c3aed;--orange:#d97706;
-  --gray:#64748b;--light:#f1f5f9;--border:#e2e8f0;--white:#ffffff;--text:#1e293b;--text2:#475569;
-  --st-nv:#e2e8f0;--st-na:#ef4444;--st-ans:#16a34a;--st-mrk:#7c3aed;--st-ma:#d97706;
-  --hh:52px;
-}
-html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);background:#e8edf4;overflow:hidden}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Aarambh UPSC – Online Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0f1f3d;--navy2:#162c52;--blue:#1e3a8a;--blue2:#2563eb;
+      --accent:#f59e0b;--green:#16a34a;--red:#dc2626;--purple:#7c3aed;--orange:#d97706;
+      --gray:#64748b;--light:#f1f5f9;--border:#e2e8f0;--white:#ffffff;--text:#1e293b;--text2:#475569;
+      --st-nv:#e2e8f0;--st-na:#ef4444;--st-ans:#16a34a;--st-mrk:#7c3aed;--st-ma:#d97706;
+      --hh:56px;
+    }
+    html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);background:#e8edf4;overflow:hidden}
 
-/* ── Overlays ─────────────────────── */
-.overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
-.overlay.show{display:flex}
-#loader{z-index:300;flex-direction:column;background:var(--navy)}
-.spin{width:52px;height:52px;border:4px solid rgba(255,255,255,.12);border-top-color:var(--blue2);border-radius:50%;margin:0 auto 20px;animation:spin .75s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-#loader h2{font-size:18px;font-weight:700;color:#fff;text-align:center;margin-bottom:6px}
-#loader p{font-size:13px;color:#94a3b8;text-align:center}
+    /* ── Overlays ─────────────────────── */
+    .overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(10,20,40,.78);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}
+    .overlay.show{display:flex}
+    #loader{z-index:300;flex-direction:column;background:var(--navy)}
+    .spin{width:52px;height:52px;border:4px solid rgba(255,255,255,.12);border-top-color:var(--blue2);border-radius:50%;margin:0 auto 20px;animation:spin .75s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #loader h2{font-size:18px;font-weight:700;color:#fff;text-align:center;margin-bottom:6px}
+    #loader p{font-size:13px;color:#94a3b8;text-align:center}
 
-/* ── Modal cards ──────────────────── */
-.mcard{background:#fff;border-radius:14px;padding:32px;max-width:460px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.4)}
-.mcard h3{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px}
-.mcard p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:4px}
-.resume-stats,.submit-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;background:var(--light);border-radius:10px;padding:16px}
-.rs-item,.ss-item{text-align:center}
-.rs-item .rv,.ss-item .sv{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--navy)}
-.rs-item .rl,.ss-item .sl{font-size:11px;text-transform:uppercase;color:var(--gray);letter-spacing:.5px;margin-top:2px}
-.sv-ans{color:var(--green)!important}.sv-na{color:var(--red)!important}.sv-mrk{color:var(--purple)!important}
-.modal-actions{display:flex;gap:10px;margin-top:20px}
-.btn-sec{flex:1;padding:12px;background:#fff;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2)}
-.btn-pri{flex:2;padding:12px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.btn-danger{background:var(--red)!important}
-.submit-warn{font-size:12.5px;color:var(--red);padding:10px 14px;background:#fef2f2;border-radius:8px;margin-top:8px}
+    /* ── Modal cards ──────────────────── */
+    .mcard{background:#fff;border-radius:14px;padding:32px;max-width:460px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,.4)}
+    .mcard h3{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:10px}
+    .mcard p{font-size:13.5px;color:var(--text2);line-height:1.7;margin-bottom:4px}
+    .resume-stats,.submit-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;background:var(--light);border-radius:10px;padding:16px}
+    .rs-item,.ss-item{text-align:center}
+    .rs-item .rv,.ss-item .sv{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--navy)}
+    .rs-item .rl,.ss-item .sl{font-size:11px;text-transform:uppercase;color:var(--gray);letter-spacing:.5px;margin-top:2px}
+    .sv-ans{color:var(--green)!important}.sv-na{color:var(--red)!important}.sv-mrk{color:var(--purple)!important}
+    .modal-actions{display:flex;gap:10px;margin-top:20px}
+    .btn-sec{flex:1;padding:12px;background:#fff;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;color:var(--text2)}
+    .btn-pri{flex:2;padding:12px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-danger{background:var(--red)!important}
+    .submit-warn{font-size:12.5px;color:var(--red);padding:10px 14px;background:#fef2f2;border-radius:8px;margin-top:8px}
 
-/* ── Exit modal ─────────────────── */
-#exitModal .mcard h3{color:var(--red)}
+    /* ── Error screen ─────────────────── */
+    #errScreen{display:none;position:fixed;inset:0;z-index:400;background:var(--navy);flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;color:#fff}
+    #errScreen.show{display:flex}
+    #errScreen h2{font-size:22px;margin-bottom:12px}
+    #errScreen p{font-size:14px;color:#94a3b8;max-width:400px;line-height:1.7;margin-bottom:24px}
+    .btn-err{padding:12px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 
-/* ── Error screen ─────────────────── */
-#errScreen{display:none;position:fixed;inset:0;z-index:400;background:var(--navy);flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;color:#fff}
-#errScreen.show{display:flex}
-#errScreen h2{font-size:22px;margin-bottom:12px}
-#errScreen p{font-size:14px;color:#94a3b8;max-width:400px;line-height:1.7;margin-bottom:24px}
-.btn-err{padding:12px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+    /* ── Quiz shell ───────────────────── */
+    #qshell{height:100vh;display:flex;flex-direction:column}
 
-/* ── Quiz shell ───────────────────── */
-#qshell{height:100vh;display:flex;flex-direction:column}
+    /* Top bar */
+    .topbar{height:var(--hh);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:10}
+    .tb-left{display:flex;align-items:center;gap:16px}
+    .tb-brand{font-size:18px;font-weight:700;color:#fff;letter-spacing:-.4px}
+    .tb-brand span{color:var(--accent)}
+    .tb-test{font-size:12px;color:#64748b;background:var(--navy2);padding:4px 14px;border-radius:20px;font-weight:500;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .tb-right{display:flex;align-items:center;gap:16px}
+    .tb-user{font-size:12px;color:#94a3b8;text-align:right;line-height:1.4}
+    .tb-user strong{display:block;color:#cbd5e1;font-size:13px}
+    .timer{background:var(--navy2);border:1.5px solid #334155;border-radius:8px;padding:6px 16px;font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:#fff;letter-spacing:2px;min-width:96px;text-align:center;transition:border-color .3s,color .3s}
+    .timer.warn{border-color:var(--accent);color:var(--accent)}
+    .timer.danger{border-color:var(--red);color:var(--red);animation:blink 1s step-end infinite}
+    @keyframes blink{50%{opacity:.5}}
+    .sync-dot{width:10px;height:10px;border-radius:50%;background:var(--gray);transition:background .4s;flex-shrink:0}
+    .sync-dot.saving{background:var(--accent);animation:pd 1s infinite}
+    .sync-dot.saved{background:var(--green)}
+    @keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+    .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+    .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-/* Top bar */
-.topbar{height:var(--hh);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:10}
-.tb-left{display:flex;align-items:center;gap:14px}
-.tb-brand{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.4px}
-.tb-brand span{color:var(--accent)}
-.tb-test{font-size:11px;color:#64748b;background:var(--navy2);padding:3px 10px;border-radius:20px;font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tb-right{display:flex;align-items:center;gap:10px}
-.tb-user{font-size:12px;color:#94a3b8;text-align:right;line-height:1.4}
-.tb-user strong{display:block;color:#cbd5e1;font-size:13px}
-.timer{background:var(--navy2);border:1.5px solid #334155;border-radius:8px;padding:5px 14px;font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#fff;letter-spacing:2px;min-width:88px;text-align:center;transition:border-color .3s,color .3s}
-.timer.warn{border-color:var(--accent);color:var(--accent)}
-.timer.danger{border-color:var(--red);color:var(--red);animation:blink 1s step-end infinite}
-@keyframes blink{50%{opacity:.5}}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--gray);transition:background .4s;flex-shrink:0}
-.sync-dot.saving{background:var(--accent);animation:pd 1s infinite}
-.sync-dot.saved{background:var(--green)}
-@keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
-/* Exit button in topbar */
-.tb-exit{padding:6px 14px;background:transparent;border:1.5px solid #475569;border-radius:7px;font-family:inherit;font-size:12px;font-weight:600;color:#94a3b8;cursor:pointer;transition:all .15s;white-space:nowrap}
-.tb-exit:hover{border-color:var(--red);color:#fca5a5;background:rgba(220,38,38,.15)}
+    /* Body grid */
+    .qbody{flex:1;display:grid;grid-template-columns:1fr 300px;min-height:0}
 
-/* Body grid */
-.qbody{flex:1;display:grid;grid-template-columns:1fr 296px;min-height:0}
+    /* Main panel */
+    .qmain{display:flex;flex-direction:column;min-height:0;background:#fff}
+    .secbar{background:#f8fafc;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;flex-shrink:0;padding:0 6px}
+    .secbar::-webkit-scrollbar{height:0}
+    .sec-tab{padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+    .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
+    .qwrap{flex:1;overflow-y:auto;padding:24px 28px;display:grid;grid-template-columns:1.1fr 1fr;gap:28px;align-items:start}
+    .qmeta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
+    .qsubj-lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:4px 12px;border-radius:20px}
+    .qmarks-lbl{font-size:13px;color:var(--gray)}
 
-/* Main panel */
-.qmain{display:flex;flex-direction:column;min-height:0;background:#fff}
+    /* Left: image panel */
+    .qimg-panel{background:#fafcff;border-radius:16px;border:1px solid var(--border);padding:16px;min-height:360px;display:flex;flex-direction:column}
+    .qimg-box{flex:1;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;min-height:280px}
+    .qimg-box img{max-width:100%;max-height:52vh;object-fit:contain;border-radius:8px;display:block;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.02)}
+    .img-msg{font-size:14px;color:var(--gray);text-align:center}
+    .img-err{font-size:14px;color:var(--red)}
 
-/* Section bar row — contains tabs + toggle */
-.secbar-row{background:#f8fafc;border-bottom:1px solid var(--border);display:flex;align-items:center;flex-shrink:0}
-.secbar{display:flex;overflow-x:auto;flex:1;padding:0 4px}
-.secbar::-webkit-scrollbar{height:0}
-.sec-tab{padding:10px 18px;font-size:12.5px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
-.sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
-/* Subject label shown on question */
-.qsubj-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;background:#eff6ff;color:var(--blue2);padding:3px 10px;border-radius:20px}
-.qsubj-lbl.hidden{display:none!important}
+    /* Right: options panel */
+    .opt-panel{background:#fff;border-radius:16px;border:1px solid var(--border);padding:20px 18px}
+    .optgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+    .opt-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 16px;border:2px solid var(--border);border-radius:14px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+    .opt-btn:hover{border-color:var(--blue2);background:#eff6ff}
+    .opt-btn.sel{border-color:var(--blue2);background:#dbeafe;box-shadow:0 4px 10px rgba(37,99,235,0.1)}
+    .opt-btn input{position:absolute;opacity:0;pointer-events:none}
+    .opt-circle{width:40px;height:40px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--text2);transition:all .15s}
+    .opt-btn.sel .opt-circle{background:var(--blue2);color:#fff}
+    .opt-lbl-txt{font-size:16px;font-weight:600;color:var(--text2)}
+    .opt-btn.sel .opt-lbl-txt{color:var(--blue2)}
 
-/* ── Question pane ─────────────────── */
-.qwrap{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:0}
-.qmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-shrink:0}
-.qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
-.qmarks-lbl{font-size:12px;color:var(--gray)}
+    /* Action bar */
+    .abar{border-top:1px solid var(--border);background:#fafafa;padding:14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .bgrp{display:flex;gap:10px}
+    .bact{padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
+    .bact:hover{border-color:#94a3b8;color:var(--text)}
+    .bmark{border-color:var(--purple);color:var(--purple)}
+    .bmark:hover,.bmark.active{background:var(--purple);color:#fff}
+    .bsave{background:var(--blue2);color:#fff;border-color:var(--blue2);padding:10px 28px}
+    .bsave:hover{background:var(--blue)}
 
-/* Two-column content area: image left, options right */
-.qcontent{display:flex;gap:20px;flex:1;min-height:0;align-items:flex-start}
+    /* Nav bar */
+    .navbar{border-top:1px solid var(--border);background:#fff;padding:12px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+    .bnav{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;font-family:inherit;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
+    .bnav:hover:not(:disabled){border-color:var(--blue2);color:var(--blue2)}
+    .bnav:disabled{opacity:.35;cursor:default}
+    .navlbl{font-size:14px;color:var(--gray);font-weight:500}
+    .bsubmit{padding:12px 32px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s}
+    .bsubmit:hover{background:#15803d}
 
-/* Image column — fixed width ratio, variable height */
-.qimg-box{
-  flex:0 0 60%;width:60%;
-  background:#f8fafc;border:1px solid var(--border);border-radius:12px;
-  padding:14px;overflow:hidden;
-  display:flex;align-items:flex-start;justify-content:center;
-  min-height:260px;
-}
-.qimg-box img{width:100%;height:auto;object-fit:contain;border-radius:6px;display:block;transition:opacity .25s ease}
-/* Skeleton shimmer — fills box while image loads, preserves layout */
-.img-skeleton{
-  width:100%;min-height:240px;border-radius:8px;
-  background:linear-gradient(90deg,#e8edf4 25%,#d4dae4 50%,#e8edf4 75%);
-  background-size:300% 100%;
-  animation:shimmer 1.6s ease-in-out infinite;
-}
-@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
-.img-err{font-size:13px;color:var(--red);padding:12px 0}
-.img-msg{font-size:13px;color:var(--gray);padding:12px 0}
+    /* Sidebar (unchanged width, minor polish) */
+    .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+    .sb-usr{background:var(--navy);padding:16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .sb-av{width:42px;height:42px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+    .sb-nm{font-size:14px;font-weight:600;color:#fff;line-height:1.3}
+    .sb-em{font-size:11px;color:#64748b}
+    .sb-leg{padding:14px 16px;border-bottom:1px solid var(--border);background:#fafafa;flex-shrink:0}
+    .sb-leg h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:10px}
+    .leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .leg-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+    .leg-dot{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+    .ld-nv{background:var(--st-nv);color:var(--text2)}.ld-na{background:var(--st-na);color:#fff}.ld-ans{background:var(--st-ans);color:#fff}.ld-mrk{background:var(--st-mrk);color:#fff}.ld-ma{background:var(--st-ma);color:#fff}
+    .sb-pal{flex:1;overflow-y:auto;padding:16px}
+    .sb-pal h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:12px}
+    .pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+    .pal-btn{aspect-ratio:1;border:none;border-radius:50%;font-size:12px;font-weight:700;cursor:pointer;transition:all .1s;font-family:'IBM Plex Mono',monospace;position:relative}
+    .pal-btn.st-nv{background:var(--st-nv);color:var(--text2)}.pal-btn.st-na{background:var(--st-na);color:#fff}.pal-btn.st-ans{background:var(--st-ans);color:#fff}.pal-btn.st-mrk{background:var(--st-mrk);color:#fff}.pal-btn.st-ma{background:var(--st-ma);color:#fff}
+    .pal-btn.current{box-shadow:0 0 0 3px var(--blue2);z-index:1}
+    .pal-btn.st-mrk::after,.pal-btn.st-ma::after{content:'';position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:var(--accent);border-radius:50%;border:1px solid #fff}
+    .sb-sum{border-top:1px solid var(--border);background:#fafafa;padding:14px 16px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .sum-cell{text-align:center}
+    .sum-val{font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+    .sum-lbl{font-size:10px;text-transform:uppercase;color:var(--gray);letter-spacing:.4px}
+    .s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
+    /* sidebar submit removed — only navbar submit remains */
 
-/* Options column — fixed width ratio, centered */
-.qopts-col{
-  flex:0 0 40%;width:40%;
-  display:flex;flex-direction:column;align-items:stretch;justify-content:center;
-  padding:4px 0;
-  min-height:260px;
-}
-.opts-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:12px}
-.optgrid{display:flex;flex-direction:column;gap:12px}
-.opt-btn{position:relative;display:flex;align-items:center;gap:14px;padding:16px 18px;border:2px solid var(--border);border-radius:10px;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
-.opt-btn:hover{border-color:var(--blue2);background:#eff6ff}
-.opt-btn.sel{border-color:var(--blue2);background:#dbeafe}
-.opt-btn input{position:absolute;opacity:0;pointer-events:none}
-.opt-circle{width:38px;height:38px;border-radius:50%;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--text2);transition:all .15s;flex-shrink:0}
-.opt-btn.sel .opt-circle{background:var(--blue2);color:#fff}
-.opt-lbl-txt{font-size:14px;font-weight:600;color:var(--text2)}
-.opt-btn.sel .opt-lbl-txt{color:var(--blue2)}
+    /* Result screen */
+    #resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
+    #resscreen.show{display:flex}
+    .rh{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:16px 28px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+    .rh-brand{font-size:20px;font-weight:700;color:#fff}.rh-brand span{color:var(--accent)}
+    .rbody{max-width:860px;margin:0 auto;width:100%;padding:36px 20px}
+    .score-card{background:#fff;border-radius:20px;padding:40px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);margin-bottom:28px}
+    .score-circle{width:140px;height:140px;border-radius:50%;border:8px solid var(--green);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px}
+    .sc-n{font-size:48px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:var(--navy);line-height:1}
+    .sc-d{font-size:15px;color:var(--gray)}
+    .sc-g{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+    .sc-s{font-size:14px;color:var(--gray)}
+    .res-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:28px 0}
+    .rs-stat{background:var(--light);border-radius:12px;padding:18px;text-align:center}
+    .rs-stat .rv{font-size:28px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+    .rs-stat .rl{font-size:11px;text-transform:uppercase;color:var(--gray);letter-spacing:.5px;margin-top:4px}
+    .rv-c{color:var(--green)}.rv-w{color:var(--red)}.rv-s{color:var(--gray)}.rv-t{color:var(--blue2)}
+    .res-actions{display:flex;gap:16px;justify-content:center;margin-top:12px}
+    .brev{padding:14px 36px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+    .bhome{padding:14px 36px;background:#fff;color:var(--text);border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+    .rev-title{color:#fff;font-size:20px;font-weight:700;margin:32px 0 18px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:12px}
+    .rq{background:#fff;border-radius:14px;margin-bottom:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+    .rqh{padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#f8fafc}
+    .rqn{font-size:14px;font-weight:700;color:var(--navy)}
+    .rqb-lbl{font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px}
+    .rqb-c{background:#dcfce7;color:var(--green)}.rqb-w{background:#fee2e2;color:var(--red)}.rqb-s{background:var(--light);color:var(--gray)}
+    .rqbody{padding:18px 22px}
+    .rqimg{max-width:100%;max-height:300px;border-radius:8px;border:1px solid var(--border);display:block;margin-bottom:16px}
+    .rq-opts{display:flex;gap:10px;flex-wrap:wrap}
+    .rqopt{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;border:1.5px solid var(--border);background:#fff}
+    .rqopt.correct{background:#dcfce7;border-color:var(--green);color:var(--green)}
+    .rqopt.wrong{background:#fee2e2;border-color:var(--red);color:var(--red)}
+    .rqfoot{padding:0 22px 18px}
+    .rqai{max-width:100%;border-radius:8px;border:1px solid var(--border);margin-top:10px}
 
-/* Action bar */
-.abar{border-top:1px solid var(--border);background:#fafafa;padding:12px 20px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.bgrp{display:flex;gap:8px}
-.bact{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
-.bact:hover{border-color:#94a3b8;color:var(--text)}
-.bmark{border-color:var(--purple);color:var(--purple)}
-.bmark:hover,.bmark.active{background:var(--purple);color:#fff}
-.bsave{background:var(--blue2);color:#fff;border-color:var(--blue2);padding:9px 24px}
-.bsave:hover{background:var(--blue)}
-
-/* Nav bar */
-.navbar{border-top:1px solid var(--border);background:#fff;padding:10px 16px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
-.bnav{padding:8px 20px;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
-.bnav:hover:not(:disabled){border-color:var(--blue2);color:var(--blue2)}
-.bnav:disabled{opacity:.35;cursor:default}
-.navlbl{font-size:12.5px;color:var(--gray);font-weight:500}
-
-/* ── Sidebar ──────────────────────── */
-.qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
-.sb-usr{background:var(--navy);padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.sb-av{width:38px;height:38px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
-.sb-nm{font-size:13px;font-weight:600;color:#fff;line-height:1.3}
-.sb-em{font-size:11px;color:#64748b}
-.sb-leg{padding:12px 14px;border-bottom:1px solid var(--border);background:#fafafa;flex-shrink:0}
-.sb-leg h4{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:8px}
-.leg-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.leg-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
-.leg-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
-.ld-nv{background:var(--st-nv);color:var(--text2)}.ld-na{background:var(--st-na);color:#fff}.ld-ans{background:var(--st-ans);color:#fff}.ld-mrk{background:var(--st-mrk);color:#fff}.ld-ma{background:var(--st-ma);color:#fff}
-.sb-pal{flex:1;overflow-y:auto;padding:14px}
-.sb-pal h4{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--gray);margin-bottom:10px}
-.pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.pal-btn{aspect-ratio:1;border:none;border-radius:50%;font-size:11px;font-weight:700;cursor:pointer;transition:all .1s;font-family:'IBM Plex Mono',monospace;position:relative}
-.pal-btn.st-nv{background:var(--st-nv);color:var(--text2)}.pal-btn.st-na{background:var(--st-na);color:#fff}.pal-btn.st-ans{background:var(--st-ans);color:#fff}.pal-btn.st-mrk{background:var(--st-mrk);color:#fff}.pal-btn.st-ma{background:var(--st-ma);color:#fff}
-.pal-btn.current{box-shadow:0 0 0 3px var(--blue2);z-index:1}
-.pal-btn.st-mrk::after,.pal-btn.st-ma::after{content:'';position:absolute;top:-2px;right:-2px;width:7px;height:7px;background:var(--accent);border-radius:50%;border:1px solid #fff}
-.sb-sum{border-top:1px solid var(--border);background:#fafafa;padding:12px 14px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sum-cell{text-align:center}
-.sum-val{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace}
-.sum-lbl{font-size:10px;text-transform:uppercase;color:var(--gray);letter-spacing:.4px}
-.s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
-.sb-bsubmit{margin:0 14px 14px;padding:12px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s;flex-shrink:0}
-.sb-bsubmit:hover{background:#15803d}
-/* Section visibility toggle */
-.sec-toggle-btn{flex-shrink:0;margin:0 8px;padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;font-family:inherit;background:#fff;color:var(--gray);cursor:pointer;white-space:nowrap;transition:all .15s}
-.sec-toggle-btn:hover{border-color:var(--blue2);color:var(--blue2)}
-.secbar-row.sections-hidden .sec-toggle-btn{border-color:var(--accent);color:var(--orange);background:#fffbeb}
-.secbar-row.sections-hidden .secbar{display:none!important}
-
-/* ── Result screen ────────────────── */
-#resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
-#resscreen.show{display:flex}
-.rh{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
-.rh-brand{font-size:18px;font-weight:700;color:#fff}.rh-brand span{color:var(--accent)}
-.rbody{max-width:820px;margin:0 auto;width:100%;padding:32px 16px}
-.score-card{background:#fff;border-radius:16px;padding:36px 40px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.35);margin-bottom:24px}
-.score-circle{width:128px;height:128px;border-radius:50%;border:7px solid var(--green);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 18px}
-.sc-n{font-size:42px;font-weight:800;font-family:'IBM Plex Mono',monospace;color:var(--navy);line-height:1}
-.sc-d{font-size:14px;color:var(--gray)}
-.sc-g{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px}
-.sc-s{font-size:13px;color:var(--gray)}
-.res-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
-.rs-stat{background:var(--light);border-radius:10px;padding:16px;text-align:center}
-.rs-stat .rv{font-size:26px;font-weight:700;font-family:'IBM Plex Mono',monospace}
-.rs-stat .rl{font-size:10px;text-transform:uppercase;color:var(--gray);letter-spacing:.5px;margin-top:3px}
-.rv-c{color:var(--green)}.rv-w{color:var(--red)}.rv-s{color:var(--gray)}.rv-t{color:var(--blue2)}
-.res-actions{display:flex;gap:12px;justify-content:center;margin-top:8px}
-.brev{padding:12px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.bhome{padding:12px 32px;background:#fff;color:var(--text);border:2px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.rev-title{color:#fff;font-size:18px;font-weight:700;margin:28px 0 16px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:10px}
-.rq{background:#fff;border-radius:12px;margin-bottom:16px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.2)}
-.rqh{padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#f8fafc}
-.rqn{font-size:13px;font-weight:700;color:var(--navy)}
-.rqb-lbl{font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px}
-.rqb-c{background:#dcfce7;color:var(--green)}.rqb-w{background:#fee2e2;color:var(--red)}.rqb-s{background:var(--light);color:var(--gray)}
-.rqbody{padding:16px 20px}
-.rqimg{max-width:100%;max-height:280px;border-radius:6px;border:1px solid var(--border);display:block;margin-bottom:14px}
-.rq-opts{display:flex;gap:8px;flex-wrap:wrap}
-.rqopt{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;border:1.5px solid var(--border);background:#fff}
-.rqopt.correct{background:#dcfce7;border-color:var(--green);color:var(--green)}
-.rqopt.wrong{background:#fee2e2;border-color:var(--red);color:var(--red)}
-.rqfoot{padding:0 20px 16px}
-.rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
-
-@media(max-width:900px){
-  .qcontent{flex-direction:column}
-  .qimg-box{flex:none;width:100%}
-  .qopts-col{flex:none;width:100%;min-height:auto}
-}
-@media(max-width:768px){
-  .qbody{grid-template-columns:1fr}
-  .qsidebar{display:none}
-  .tb-user{display:none}
-  .res-stats{grid-template-columns:1fr 1fr}
-  .score-card{padding:28px 20px}
-}
-</style>
+    @media(max-width:800px){
+      .qbody{grid-template-columns:1fr}
+      .qsidebar{display:none}
+      .tb-user{display:none}
+      .qwrap{grid-template-columns:1fr;gap:16px}
+      .optgrid{max-width:100%}
+      .res-stats{grid-template-columns:1fr 1fr}
+      .score-card{padding:28px 20px}
+    }
+  </style>
 </head>
 <body>
 
@@ -257,19 +217,6 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
     <div class="modal-actions">
       <button class="btn-sec btn-danger" onclick="startFresh()">Start Fresh</button>
       <button class="btn-pri" onclick="resumeSession()">Resume →</button>
-    </div>
-  </div>
-</div>
-
-<!-- EXIT MODAL -->
-<div id="exitModal" class="overlay">
-  <div class="mcard">
-    <h3 style="color:var(--red)">⚠ Exit Quiz?</h3>
-    <p>Your progress has been auto-saved. You can resume this test later from the dashboard.</p>
-    <p style="color:var(--red);font-size:12px;margin-top:8px">⚠ The timer will <strong>not</strong> pause — time will keep running.</p>
-    <div class="modal-actions">
-      <button class="btn-sec" onclick="closeExitModal()">Stay in Quiz</button>
-      <button class="btn-pri btn-danger" onclick="doExit()">Save &amp; Exit →</button>
     </div>
   </div>
 </div>
@@ -303,7 +250,7 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 <div id="resscreen">
   <div class="rh">
     <div class="rh-brand">Aarambh<span>UPSC</span></div>
-    <div style="color:#94a3b8;font-size:12px" id="resEmail"></div>
+    <div style="color:#94a3b8;font-size:13px" id="resEmail"></div>
   </div>
   <div class="rbody">
     <div class="score-card">
@@ -342,28 +289,26 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
       <div class="tb-user"><strong id="tbName">Candidate</strong><span id="tbEmail">—</span></div>
       <div class="timer" id="timerEl">120:00</div>
       <div class="sync-dot" id="syncDot" title="Auto-save"></div>
-      <button class="tb-exit" onclick="confirmExit()">✕ Exit</button>
+      <button class="btn-exit" onclick="confirmExit()">✕ Exit</button>
     </div>
   </div>
 
   <div class="qbody">
     <div class="qmain">
-      <div class="secbar-row" id="secbarRow">
-        <div class="secbar" id="secbar"></div>
-        <button class="sec-toggle-btn" id="secToggleBtn" onclick="toggleSections()">👁 Hide Subjects</button>
-      </div>
+      <div class="secbar" id="secbar"></div>
       <div class="qwrap" id="qwrap">
         <div class="qmeta">
           <span class="qnum-lbl" id="qnumLbl">Question 1 of —</span>
           <span class="qsubj-lbl" id="qsubjLbl">—</span>
           <span class="qmarks-lbl">+2 / −0.67</span>
         </div>
-        <div class="qcontent">
-          <div class="qimg-box" id="qimgBox"><div class="img-skeleton"></div></div>
-          <div class="qopts-col">
-            <div class="opts-label">Select your answer</div>
-            <div class="optgrid" id="optgrid"></div>
-          </div>
+        <!-- LEFT: image panel -->
+        <div class="qimg-panel">
+          <div class="qimg-box" id="qimgBox"><span class="img-msg">Loading…</span></div>
+        </div>
+        <!-- RIGHT: options panel -->
+        <div class="opt-panel">
+          <div class="optgrid" id="optgrid"></div>
         </div>
       </div>
       <div class="abar">
@@ -376,7 +321,10 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
       <div class="navbar">
         <button class="bnav" id="prevBtn" onclick="navPrev()">◀ Prev</button>
         <span class="navlbl" id="navlbl">Q 1 / —</span>
-        <button class="bnav" id="nextBtn" onclick="navNext()">Next ▶</button>
+        <div style="display:flex;gap:10px">
+          <button class="bnav" id="nextBtn" onclick="navNext()">Next ▶</button>
+          <button class="bsubmit" onclick="showSubmitModal()">Submit Test</button>
+        </div>
       </div>
     </div>
 
@@ -402,7 +350,7 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
         <div class="sum-cell"><div class="sum-val s-mrk" id="sumMrk">0</div><div class="sum-lbl">Marked</div></div>
         <div class="sum-cell"><div class="sum-val s-nv"  id="sumNv">0</div><div class="sum-lbl">Not Visited</div></div>
       </div>
-      <button class="sb-bsubmit" onclick="showSubmitModal()">Submit Test</button>
+      <!-- sidebar submit button removed (only one submit in navbar) -->
     </div>
   </div>
 </div>
@@ -414,14 +362,12 @@ html,body{height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);b
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 // ❷ Duration
 const DURATION_SEC = 7200; // 120 min
-
-// ❸ Section visibility — set false to hide subject tabs & labels (blind-mode)
-//    Students cannot jump by subject when false; subject names are hidden.
+// ❸ Show/Hide subject tabs (set false to hide section tabs)
 const SHOW_SECTIONS = true;
 
 // Auto-save intervals
-const LS_SAVE_MS    = 30_000;   // localStorage every 30s
-const CLOUD_SYNC_MS = 300_000;  // Apps Script POST every 5 min
+const LS_SAVE_MS    = 30_000;
+const CLOUD_SYNC_MS = 300_000;
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 const S = {
@@ -430,19 +376,18 @@ const S = {
   questions:[],
   answers:{}, marks:{}, visited:{},
   currentQ:0,
-  startTs:0,    // Date.now() ms when this browser session of the test started
-  prevElapsed:0,// seconds elapsed in all previous sessions (for resume)
+  startTs:0,
+  prevElapsed:0,
   submitted:false,
   sessionKey:'',
   handles:{ timer:null, ls:null, cloud:null },
-  reviewMode: false,        // true when opened via Review Answers link
+  reviewMode: false,
 };
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   setLoader('Verifying session…');
 
-  // 1. Read user from localStorage (set by dashboard on Google login)
   S.email = (localStorage.getItem('aarambh_user_email')||'').toLowerCase().trim();
   S.name  =  localStorage.getItem('aarambh_user_name') || '';
   if (!S.email) {
@@ -450,40 +395,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // 2. URL params
   const p = new URLSearchParams(location.search);
   S.productId  = p.get('productId') || '';
   S.testNumber = parseInt(p.get('testNumber')||'1', 10);
   S.testName   = decodeURIComponent(p.get('testName')||`Test ${S.testNumber}`);
   const mode          = p.get('mode') || 'quiz';
-  S.reviewMode        = (mode === 'review');   // stored on S so beforeunload can check it
+  S.reviewMode        = (mode === 'review');
   const reviewAnswers = p.get('answersJSON') || '{}';
   if (!S.productId) {
     showErr('Invalid Link','This quiz URL is missing productId. Please go back to the dashboard and click the test again.');
     return;
   }
 
-  // Session key is per user+product+test — prevents one user seeing another's session
   S.sessionKey = `aarambh_sess_${S.productId}_${S.testNumber}_${btoa(S.email).replace(/=/g,'')}`;
 
   applyUserUI();
 
-  // 3. Fetch questions from Apps Script
   setLoader('Fetching questions…');
   if (!await fetchQs()) return;
 
-  // 4. Check mode — review or normal quiz
   hideLoader();
   if (S.reviewMode) {
-    // Parse answersJSON from URL — keys come back as strings from JSON.parse,
-    // convert to integers so buildReview()'s S.answers[i] lookup works correctly
     try {
       const parsed = JSON.parse(decodeURIComponent(reviewAnswers));
       S.answers = {};
       Object.keys(parsed).forEach(k => { S.answers[parseInt(k, 10)] = parsed[k]; });
     } catch(e) { S.answers = {}; }
 
-    // Calculate score from restored answers
     let correct=0, wrong=0, skip=0;
     S.questions.forEach((q,i) => {
       const ua = S.answers[i];
@@ -492,12 +430,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     const raw   = correct*2 - wrong*(2/3);
     const score = Math.round(Math.max(0,raw)*100)/100;
     const maxM  = S.questions.length * 2;
-
-    // elapsed:-1 tells showResult to display "—" instead of "00:00"
     showResult({score, maxM, correct, wrong, skip, elapsed:-1});
     buildReview();
     el('reviewContainer').style.display = 'block';
-
   } else {
     const saved = loadSess();
     if (saved && !saved.submitted && saved.email === S.email) {
@@ -515,7 +450,6 @@ async function fetchQs() {
     const r = await fetch(`${QUIZ_ENGINE_URL}?productId=${encodeURIComponent(S.productId)}&testNumber=${S.testNumber}`);
     const d = await r.json();
     if (d.status !== 'success') { showErr('Test Not Found', d.message || 'Quiz Engine returned an error.'); return false; }
-    // Filter trailing empty rows (no correct answer or no image)
     S.questions = (d.questions||[]).filter(q => q.correct && q.questionImg);
     if (!S.questions.length) { showErr('No Questions','This test has no questions loaded. Please contact support.'); return false; }
     return true;
@@ -537,7 +471,6 @@ function loadSess() {
 }
 function clearSess() { localStorage.removeItem(S.sessionKey); }
 
-// Total seconds elapsed so far (across all sessions, including current)
 function calcElapsed() {
   const cur = S.startTs > 0 ? Math.floor((Date.now()-S.startTs)/1000) : 0;
   return (S.prevElapsed||0) + cur;
@@ -552,11 +485,10 @@ function initFresh() {
 function initResume(saved) {
   S.answers=saved.answers||{}; S.marks=saved.marks||{}; S.visited=saved.visited||{};
   S.currentQ=saved.currentQ||0;
-  S.prevElapsed=saved.prevElapsed||0; // resume from where we left off
+  S.prevElapsed=saved.prevElapsed||0;
   S.startTs=Date.now(); S.submitted=false;
 }
 
-// ─── RESUME MODAL ─────────────────────────────────────────────────────────────
 function showResumeModal(saved) {
   const ans  = Object.keys(saved.answers||{}).length;
   const left = Math.max(0, DURATION_SEC-(saved.prevElapsed||0));
@@ -579,13 +511,11 @@ function relTime(ts) {
   if(s<60) return `${s}s ago`; if(s<3600) return `${Math.floor(s/60)}m ago`; return `${Math.floor(s/3600)}h ago`;
 }
 
-// ─── BEGIN QUIZ ───────────────────────────────────────────────────────────────
 function beginQuiz() {
   buildSections(); buildPalette(); renderQ(S.currentQ);
   startTimer(); startLS(); startCloud();
 }
 
-// ─── TIMER ────────────────────────────────────────────────────────────────────
 function startTimer() {
   clearInterval(S.handles.timer);
   updateTimer();
@@ -597,12 +527,10 @@ function updateTimer() {
   t.className='timer'+(l<=300?' danger':l<=900?' warn':'');
 }
 
-// ─── AUTO-SAVE ────────────────────────────────────────────────────────────────
 function startLS() {
   clearInterval(S.handles.ls);
   S.handles.ls = setInterval(()=>{ setSyncDot('saving'); saveSess(); }, LS_SAVE_MS);
 }
-// 5-min cloud sync — requires saveProgress action in Quiz Engine (see quiz_engine_addon.js)
 function startCloud() {
   clearInterval(S.handles.cloud);
   S.handles.cloud = setInterval(async ()=>{
@@ -616,7 +544,7 @@ function startCloud() {
           secondsLeft:getLeft(), answeredCount:Object.keys(S.answers).length
         })
       });
-    } catch(e){ console.warn('Cloud sync skipped (non-fatal):',e.message); }
+    } catch(e){ console.warn('Cloud sync skipped'); }
   }, CLOUD_SYNC_MS);
 }
 function setSyncDot(st) {
@@ -624,25 +552,17 @@ function setSyncDot(st) {
   if(st==='saved') setTimeout(()=>{ d.className='sync-dot'; },2500);
 }
 
-// ─── SECTIONS ─────────────────────────────────────────────────────────────────
+// Sections (toggleable)
 function buildSections() {
+  const bar=el('secbar');
+  if (!SHOW_SECTIONS) { bar.style.display='none'; return; }
   const subs=[...new Set(S.questions.map(q=>q.subject).filter(Boolean))];
-  const row=el('secbarRow'), bar=el('secbar'), btn=el('secToggleBtn');
-  if(!SHOW_SECTIONS){
-    // Blind mode — hide everything section-related at boot
-    bar.style.display='none';
-    if(btn) btn.style.display='none';
-    row.style.display='none';
-    return;
-  }
-  if(subs.length<=1){
-    row.style.display='none';
-    return;
-  }
-  row.style.display='flex';
+  if(subs.length<=1){bar.style.display='none';return;}
+  bar.style.display='flex';
   bar.innerHTML=subs.map(s=>`<button class="sec-tab" data-s="${esc(s)}" onclick="jumpSub('${esc(s)}')">${esc(s)}</button>`).join('');
 }
 function updSecTabs() {
+  if (!SHOW_SECTIONS) return;
   const cur=S.questions[S.currentQ]?.subject;
   document.querySelectorAll('.sec-tab').forEach(t=>t.classList.toggle('active',t.dataset.s===cur));
 }
@@ -650,35 +570,24 @@ function jumpSub(sub) {
   const i=S.questions.findIndex(q=>q.subject===sub); if(i>-1) goTo(i);
 }
 
-// ─── RENDER QUESTION ──────────────────────────────────────────────────────────
 function renderQ(idx) {
   S.currentQ=idx; S.visited[idx]=true;
   const q=S.questions[idx], n=S.questions.length;
   el('qnumLbl').textContent=`Question ${idx+1} of ${n}`;
-  const subjEl=el('qsubjLbl');
-  subjEl.textContent=q.subject||'General Studies';
-  subjEl.classList.toggle('hidden',!SHOW_SECTIONS);
+  el('qsubjLbl').textContent=q.subject||'General Studies';
   el('navlbl').textContent=`Q ${idx+1} / ${n}`;
   el('prevBtn').disabled=idx===0;
   el('nextBtn').disabled=idx===n-1;
 
-  // Image — skeleton keeps layout stable while loading, fades in on ready
   const box=el('qimgBox');
-  box.innerHTML='<div class="img-skeleton"></div>';
+  box.innerHTML='<span class="img-msg">Loading image…</span>';
   if(q.questionImg){
     const img=new Image();
-    img.onload=()=>{
-      box.innerHTML='';
-      const i=document.createElement('img');
-      i.src=img.src; i.alt=`Q${idx+1}`; i.style.opacity='0';
-      box.appendChild(i);
-      requestAnimationFrame(()=>{ i.style.opacity='1'; });
-    };
-    img.onerror=()=>{ box.innerHTML='<span class="img-err">⚠ Image failed to load. Refresh or check connection.</span>'; };
+    img.onload=()=>{ box.innerHTML=''; const i=document.createElement('img'); i.src=img.src; i.alt=`Q${idx+1}`; box.appendChild(i); };
+    img.onerror=()=>{ box.innerHTML='<span class="img-err">⚠ Image failed to load.</span>'; };
     img.src=q.questionImg;
   } else { box.innerHTML='<span class="img-err">No image for this question.</span>'; }
 
-  // Options — purely A B C D (all content is in the question image per schema)
   const grid=el('optgrid'); grid.innerHTML='';
   ['A','B','C','D'].forEach(k=>{
     const sel=S.answers[idx]===k;
@@ -693,19 +602,14 @@ function renderQ(idx) {
   updPalette(); updSummary(); updSecTabs();
 }
 
-// ─── ANSWERS ──────────────────────────────────────────────────────────────────
-function selectAns(idx,key){
-  S.answers[idx]=key; renderQ(idx); saveSess(); // immediate save on answer
-}
+function selectAns(idx,key){ S.answers[idx]=key; renderQ(idx); saveSess(); }
 function clearAnswer(){ delete S.answers[S.currentQ]; renderQ(S.currentQ); saveSess(); }
 function toggleMark(){
   const i=S.currentQ; S.marks[i]=!S.marks[i]; if(!S.marks[i]) delete S.marks[i];
   el('markBtn').classList.toggle('active',!!S.marks[i]); updPalette(); saveSess();
 }
 
-// ─── NAV ──────────────────────────────────────────────────────────────────────
 function saveAndNext(){
-  // Standard TCS iON: Save & Next clears mark-for-review
   delete S.marks[S.currentQ]; saveSess();
   const nx=S.currentQ+1; if(nx<S.questions.length) goTo(nx); else updPalette();
 }
@@ -713,7 +617,6 @@ function navPrev(){ if(S.currentQ>0) goTo(S.currentQ-1); }
 function navNext(){ if(S.currentQ<S.questions.length-1) goTo(S.currentQ+1); }
 function goTo(i){ S.visited[i]=true; renderQ(i); }
 
-// ─── PALETTE ──────────────────────────────────────────────────────────────────
 function buildPalette(){
   const g=el('palGrid'); g.innerHTML='';
   S.questions.forEach((_,i)=>{
@@ -744,7 +647,6 @@ function updSummary(){
   el('sumMrk').textContent=mrk; el('sumNv').textContent=nv;
 }
 
-// ─── SUBMIT ───────────────────────────────────────────────────────────────────
 function showSubmitModal(){
   const n=S.questions.length, ans=Object.keys(S.answers).length, mrk=Object.keys(S.marks).length;
   el('sm-ans').textContent=ans; el('sm-na').textContent=n-ans; el('sm-mrk').textContent=mrk;
@@ -767,10 +669,7 @@ async function doFinalSubmit(auto=false){
   const score=Math.round(Math.max(0,raw)*100)/100;
   const maxM=S.questions.length*2;
 
-  // Mark session done so resume doesn't reappear
   saveSess();
-
-  // Submit to Apps Script (best-effort)
   el('loaderMsg').textContent='Submitting results…';
   el('loader').classList.add('show');
   try {
@@ -783,17 +682,15 @@ async function doFinalSubmit(auto=false){
         score, totalQuestions:S.questions.length,
         timeTaken:`${Math.floor(elapsed/60)}m ${elapsed%60}s`,
         correct, wrong, skip,
-        answersJSON: JSON.stringify(S.answers)   // per-question responses for scorecard
+        answersJSON: JSON.stringify(S.answers)
       })
     });
-  } catch(e){ console.warn('Submit POST failed (non-fatal):',e.message); }
+  } catch(e){ console.warn('Submit POST failed'); }
   el('loader').classList.remove('show');
-
-  clearSess(); // Clear session after successful submit
+  clearSess();
   showResult({score,maxM,correct,wrong,skip,elapsed});
 }
 
-// ─── RESULT ───────────────────────────────────────────────────────────────────
 function showResult({score,maxM,correct,wrong,skip,elapsed}){
   const pct=maxM>0?Math.round(score/maxM*100):0;
   const grade=pct>=70?'🏆 Excellent':pct>=50?'✅ Good':pct>=35?'📘 Average':'📖 Needs More Practice';
@@ -828,21 +725,6 @@ function buildReview(){
   });
 }
 
-// ─── EXIT ─────────────────────────────────────────────────────────────────────
-function confirmExit(){ if(!S.submitted&&S.questions.length>0) saveSess(); el('exitModal').classList.add('show'); }
-function closeExitModal(){ el('exitModal').classList.remove('show'); }
-function doExit(){ saveSess(); location.href='index.html'; }
-
-// ─── SECTION TOGGLE ───────────────────────────────────────────────────────────
-function toggleSections(){
-  const row=el('secbarRow'), btn=el('secToggleBtn');
-  const hidden=row.classList.toggle('sections-hidden');
-  btn.textContent=hidden?'👁 Show Subjects':'👁 Hide Subjects';
-  // Also hide/show subject label on current question
-  el('qsubjLbl').classList.toggle('hidden',hidden);
-}
-
-// ─── UTILS ────────────────────────────────────────────────────────────────────
 function applyUserUI(){
   const init=(S.name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2))||'A';
   el('tbName').textContent=S.name; el('tbEmail').textContent=S.email;
@@ -855,7 +737,18 @@ function showErr(t,m){ hideLoader(); el('errTitle').textContent=t; el('errMsg').
 function el(id){ return document.getElementById(id); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// Save on page close/navigate away
+// Exit confirmation
+function confirmExit(){
+  if(!S.submitted && S.questions.length>0 && !S.reviewMode){
+    if(confirm('Your progress is auto-saved. Exit to dashboard?')) {
+      saveSess();
+      location.href='index.html';
+    }
+  } else {
+    location.href='index.html';
+  }
+}
+
 window.addEventListener('beforeunload',()=>{ if(!S.submitted&&!S.reviewMode&&S.questions.length>0) saveSess(); });
 </script>
 </body>
