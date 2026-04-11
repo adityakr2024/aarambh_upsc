@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aarambh Times UPSC | Dashboard</title>
+  <meta name="description" content="UPSC हिंदी माध्यम Dashboard — Track your quiz progress, access test series, and more." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+    :root { --primary: #1e40af; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; }
+    .heading-font { font-family: 'Playfair Display', serif; }
+
+    /* ── Auth states ── */
+    /* Hide all non‑loading states by default */
+    #state-signed-out,
+    #state-not-registered,
+    #state-dashboard { display: none; }
+
+    /* Loading overlay styling (fallback if inline style is lost) */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 9999;
+      display: flex;                /* fallback display */
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* ── Spinner (original) ── */
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #1e40af;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Premium loading spinner (fixed mask) ── */
+    .spinner-premium {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #1e40af 0%, #3b82f6 40%, #93c5fd 70%, #e2e8f0 100%);
+      mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+
+    /* Loading bar shimmer */
+    @keyframes loading-bar {
+      0% { width: 0%; margin-left: 0%; }
+      50% { width: 70%; margin-left: 15%; }
+      100% { width: 0%; margin-left: 100%; }
+    }
+    .animate-loading-bar {
+      animation: loading-bar 1.8s ease-in-out infinite;
+    }
+
+    /* ── Google button ── */
+    #google-signin-btn {
+      display: flex; align-items: center; gap: 12px;
+      background: white; color: #374151;
+      border: 1.5px solid #d1d5db;
+      padding: 14px 28px; border-radius: 999px;
+      font-size: 15px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    #google-signin-btn:hover {
+      border-color: #1e40af; box-shadow: 0 4px 12px rgba(30,64,175,0.15);
+      transform: translateY(-1px);
+    }
+    #google-signin-btn svg { flex-shrink: 0; }
+
+    /* ── Product cards ── */
+    .product-card {
+      background: white; border-radius: 20px;
+      border: 1.5px solid #e5e7eb;
+      padding: 24px; transition: all 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .product-card:hover { border-color: #1e40af; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(30,64,175,0.12); }
+    .product-card.locked { opacity: 0.7; }
+    .product-card.locked::before {
+      content: "🔒 Payment Pending";
+      position: absolute; top: 12px; right: 12px;
+      background: #fef3c7; color: #92400e;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 999px;
+    }
+
+    /* ── Score badge ── */
+    .score-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+    }
+    .score-badge.good    { background: #d1fae5; color: #065f46; }
+    .score-badge.average { background: #fef3c7; color: #92400e; }
+    .score-badge.poor    { background: #fee2e2; color: #991b1b; }
+
+    /* ── Quiz row hover ── */
+    .quiz-row { transition: background 0.15s; }
+    .quiz-row:hover { background: #f8fafc; }
+
+    /* ── Fade-in animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+    /* ── Smooth fade for loading text ── */
+    #loading-fact,
+    #loading-status {
+      transition: opacity 0.3s ease;
+    }
+
+    /* ── Toast notification ── */
+    #toast-content {
+      transform: translateY(-20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    #toast-content.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<!-- Toast Container -->
+<div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[10000] pointer-events-none">
+  <div id="toast-content" class="bg-slate-800 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-3 opacity-0 transition-all duration-300 pointer-events-auto max-w-md">
+    <span id="toast-message"></span>
+    <button onclick="hideToast()" class="text-white/70 hover:text-white text-lg leading-none">&times;</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════ -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+
+    <a href="https://aarambhtimes.in" class="flex items-center gap-3">
+      <div>
+        <p class="heading-font text-xl font-bold text-slate-900 leading-none">Aarambh Times</p>
+        <p class="text-xs font-semibold text-[#1e40af]">UPSC • हिंदी माध्यम</p>
+      </div>
+    </a>
+
+    <!-- User pill (shown after login) -->
+    <div id="user-pill" class="hidden items-center gap-3">
+      <div id="user-avatar" class="w-9 h-9 bg-[#1e40af] text-white rounded-full flex items-center justify-center text-sm font-bold"></div>
+      <span id="user-name-header" class="text-sm font-medium text-slate-700 hidden sm:block"></span>
+      <button onclick="signOut()" class="text-xs text-slate-500 hover:text-red-500 border border-slate-200 px-3 py-1.5 rounded-full transition-colors">Sign out</button>
+    </div>
+
+    <!-- Sign-in button in header (shown when signed out) -->
+    <div id="header-signin">
+      <button onclick="triggerGoogleSignIn()"
+        class="flex items-center gap-2 bg-[#1e40af] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors">
+        Sign in with Google
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     STATE: LOADING (Absolutely Centered Overlay)
+═══════════════════════════════════════════════════ -->
+<div id="state-loading" class="loading-overlay" style="display: flex;">
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.75rem; text-align: center; max-width: 26rem; width: 100%;">
+
+    <!-- Premium Spinner with glow -->
+    <div style="position: relative;">
+      <div style="position: absolute; inset: 0; background: #1e40af; opacity: 0.1; border-radius: 9999px; filter: blur(24px); animation: pulse 2s infinite;"></div>
+      <div class="spinner-premium"></div>
+    </div>
+
+    <!-- Custom status message -->
+    <p id="loading-status" class="text-sm font-medium text-slate-700"></p>
+
+    <!-- Rotating fact -->
+    <div style="min-height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+      <p id="loading-fact"
+         style="font-size: 0.8rem; color: #475569; line-height: 1.6; margin: 0;
+                padding: 0.65rem 1rem; background: #f1f5f9; border-radius: 0.75rem;
+                border-left: 3px solid #1e40af;">
+      </p>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="width: 100%; max-width: 280px; height: 0.4rem; background: #e2e8f0; border-radius: 1.5rem; overflow: hidden;">
+      <div style="height: 100%; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 1.5rem; animation: loading-bar 1.8s ease-in-out infinite;"></div>
+    </div>
+
+  </div>
+</div>
+  
+<!-- ══════════════════════════════════════════════
+     STATE: SIGNED OUT
+═══════════════════════════════════════════════════ -->
+<div id="state-signed-out">
+
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-[#1e40af] to-[#0f2a7a] text-white py-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <span class="inline-block bg-white/20 text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-5 backdrop-blur-sm">
+        हिंदी माध्यम UPSC Platform
+      </span>
+      <h1 class="heading-font text-4xl sm:text-5xl font-bold mb-4">
+        अपना UPSC Dashboard<br/>
+        <span class="text-amber-300">Access करें</span>
+      </h1>
+      <p class="text-lg text-white/80 mb-8 max-w-xl mx-auto">
+        Sign in with your Google account to track quizzes, view scores, and access your test series.
+      </p>
+
+      <button onclick="triggerGoogleSignIn()" id="hero-signin-btn"
+        class="inline-flex items-center gap-3 bg-white text-slate-800 font-semibold px-8 py-4 rounded-full text-base hover:bg-amber-300 hover:text-slate-900 transition-all shadow-lg">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
+      </button>
+
+      <p class="text-xs text-white/50 mt-4">Free and Paid Tests • No payment to sign in</p>
+    </div>
+  </section>
+
+  <!-- Products Showcase (visible to everyone) -->
+  <section class="py-16 px-4 max-w-5xl mx-auto">
+    <div class="text-center mb-10">
+      <p class="text-sm font-semibold text-[#1e40af] uppercase tracking-wider mb-2">Our Products</p>
+      <h2 class="heading-font text-3xl font-bold text-slate-900">What You Get Access To</h2>
+      <p class="text-slate-500 mt-2">Sign in to start your journey. Free quiz available for everyone.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-6">
+
+      <!-- Free Product Card -->
+      <div class="product-card border-green-200 bg-gradient-to-br from-green-50 to-white">
+        <span class="inline-block bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full mb-4">FREE Test • Register Now</span>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Free UPSC Prelims Mock Test</h3>
+        <p class="text-slate-500 text-sm mb-4">हिंदी माध्यम • Paper 1 • Real Exam Pattern</p>
+        <div class="flex gap-4 mb-5">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">100</p>
+            <p class="text-xs text-slate-500">Questions</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">2 hrs</p>
+            <p class="text-xs text-slate-500">Duration</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">∞</p>
+            <p class="text-xs text-slate-500">Attempts</p>
+          </div>
+        </div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc8tQcZUdSeeUkveTC6uWSkArmKHLGp5qQbYH5ctjHOykUR7A/viewform?usp=header"
+           class="block text-center bg-[#1e40af] text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition-colors">
+          Start Free Quiz →
+        </a>
+      </div>
+
+      <!-- Mini Test Series Card -->
+      <div class="product-card border-amber-200 bg-gradient-to-br from-amber-50 to-white">
+        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">PRODUCT #2 • Paid</span>
+        <h3 class="text-xl font-bold text-slate-900 mb-1">Mini Test Series</h3>
+        <p class="text-slate-500 text-sm mb-4">5 Quizzes Bundle • हिंदी माध्यम UPSC Prelims Paper 1</p>
+        <div class="flex gap-4 mb-5">
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">5</p>
+            <p class="text-xs text-slate-500">Full Quizzes</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">500+</p>
+            <p class="text-xs text-slate-500">Questions</p>
+          </div>
+          <div class="text-center">
+            <p class="text-2xl font-bold text-slate-900">Score</p>
+            <p class="text-xs text-slate-500">Tracking</p>
+          </div>
+        </div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkgXG-s3oEzoHkcBLk13LVd1wMKhnH0SjrQXTfgXIaVG7CsA/viewform?usp=header"
+           class="block text-center bg-amber-400 text-slate-900 font-semibold py-3 rounded-xl hover:bg-amber-500 transition-colors">
+          Get Mini Test Series →
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Upcoming -->
+    <div class="mt-6 bg-white border border-dashed border-slate-300 rounded-2xl p-5 text-center">
+      <span class="text-slate-400 text-sm font-medium">🔜 Current Affairs — Coming soon on aarambhtimes.in</span>
+    </div>
+  </section>
+
+</div>
+<!-- ══ END STATE: SIGNED OUT ══ -->
+
+<!-- ══════════════════════════════════════════════
+     STATE: NOT REGISTERED
+═══════════════════════════════════════════════════ -->
+<div id="state-not-registered" class="fade-up">
+
+  <div class="max-w-3xl mx-auto px-4 py-16 text-center">
+
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 mb-8">
+      <div class="text-6xl mb-4">👋</div>
+      <h2 class="heading-font text-3xl font-bold text-slate-900 mb-2">Almost there!</h2>
+      <p class="text-slate-600 mb-1">We found your Google account but you're not registered yet.</p>
+      <p id="nr-email" class="text-[#1e40af] font-medium text-sm mb-8"></p>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8 text-left">
+        <p class="font-semibold text-amber-900 mb-1">📋 Register करें — बिल्कुल मुफ्त</p>
+        <p class="text-sm text-amber-700">Registration required to track your quiz attempts and scores. It takes less than a minute.</p>
+      </div>
+
+      <a id="reg-form-link" href="#"
+         class="inline-block bg-[#1e40af] text-white font-semibold px-10 py-4 rounded-full text-base hover:bg-blue-700 transition-colors shadow-lg mb-4">
+        Register Now — Free →
+      </a>
+      <p class="text-xs text-slate-400">After registering, sign in again with the same Google account.</p>
+    </div>
+
+    <!-- Still show free quiz CTA -->
+    <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+      <p class="font-semibold text-green-800 mb-2">No payment needed for Free Mock Test!</p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSc8tQcZUdSeeUkveTC6uWSkArmKHLGp5qQbYH5ctjHOykUR7A/viewform?usp=header"
+         class="inline-block bg-green-600 text-white font-medium px-8 py-3 rounded-full text-sm hover:bg-green-700 transition-colors">
+        Start Free Quiz Now →
+      </a>
+    </div>
+
+  </div>
+
+</div>
+<!-- ══ END STATE: NOT REGISTERED ══ -->
+
+<!-- ══════════════════════════════════════════════
+     STATE: DASHBOARD (Registered & logged in)
+═══════════════════════════════════════════════════ -->
+<div id="state-dashboard" class="fade-up">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+
+    <!-- Welcome banner -->
+    <div class="bg-gradient-to-r from-[#1e40af] to-[#0f2a7a] text-white rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <p class="text-white/70 text-sm mb-1">Welcome back 👋</p>
+        <h2 class="heading-font text-2xl font-bold" id="dash-name">Student</h2>
+        <p class="text-white/60 text-xs mt-1" id="dash-email"></p>
+      </div>
+      <div class="flex gap-3 flex-wrap">
+        <span id="dash-tier-badge" class="bg-white/20 text-white text-xs font-semibold px-3 py-1.5 rounded-full"></span>
+        <span id="dash-payment-badge" class="text-xs font-semibold px-3 py-1.5 rounded-full"></span>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-2xl p-5 border border-slate-100">
+        <p class="text-xs text-slate-500 mb-1">Products</p>
+        <p class="text-2xl font-bold text-slate-900" id="stat-products">—</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100">
+        <p class="text-xs text-slate-500 mb-1">Attempted</p>
+        <p class="text-2xl font-bold text-slate-900" id="stat-attempted">—</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100">
+        <p class="text-xs text-slate-500 mb-1">Best Score</p>
+        <p class="text-2xl font-bold text-slate-900" id="stat-best">—</p>
+      </div>
+      <div class="bg-white rounded-2xl p-5 border border-slate-100">
+        <p class="text-xs text-slate-500 mb-1">Avg Score</p>
+        <p class="text-2xl font-bold text-slate-900" id="stat-avg">—</p>
+      </div>
+    </div>
+
+    <!-- Products section -->
+    <div class="mb-10">
+      <h3 class="text-lg font-semibold text-slate-900 mb-4">📦 My Products</h3>
+      <div id="products-grid" class="grid sm:grid-cols-2 gap-5">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- Quiz History section -->
+    <div>
+      <h3 class="text-lg font-semibold text-slate-900 mb-4">📊 My Performance</h3>
+      <div id="quiz-history-wrap" class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- ══ END STATE: DASHBOARD ══ -->
+
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-400 py-10 mt-10">
+  <div class="max-w-5xl mx-auto px-6 flex flex-col items-center gap-6">
+    <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-4">
+      <div class="flex items-center gap-3 text-white">
+        <span class="heading-font text-lg font-bold">Aarambh Times UPSC</span>
+      </div>
+      <div class="text-xs text-center">
+        <p class="text-amber-400 font-medium">© 2026 • हिंदी माध्यम Only</p>
+        <p class="mt-1">aarambhtimes[.]contact[@]gmail[.]com</p>
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm border-t border-slate-700 pt-6 w-full">
+      <a href="https://www.aarambhtimes.in/p/contact-us.html" class="hover:text-white transition-colors">Contact Us</a>
+      <span class="text-slate-600">|</span>
+      <a href="https://www.aarambhtimes.in/p/privacy-policy.html" class="hover:text-white transition-colors">Privacy Policy</a>
+      <span class="text-slate-600">|</span>
+      <a href="https://www.aarambhtimes.in/p/terms-and-conditions.html" class="hover:text-white transition-colors">Terms & Conditions</a>
+      <span class="text-slate-600">|</span>
+      <a href="https://www.aarambhtimes.in/p/disclaimer.html" class="hover:text-white transition-colors">Disclaimer</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════ -->
+<script>
+// ─────────────────────────────────────────────────
+const GOOGLE_CLIENT_ID = "1075233010167-2816dumqer76a3s4rki9t59ea2hu3ual.apps.googleusercontent.com";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDoh10CBLT4HMrmPY2MYqbEjZvBmw4UpTIkiCCOSwDUoGGdjqFVHzvVrLDR_j3KjgbaQ/exec";
+// ─────────────────────────────────────────────────
+
+let _idToken = null;
+let _signInCleanupTimeout = null;
+let _gisInitialized = false;
+let _toastTimeout = null;
+
+// Toast functions
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast-content');
+  const msgSpan = document.getElementById('toast-message');
+  
+  if (_toastTimeout) {
+    clearTimeout(_toastTimeout);
+    _toastTimeout = null;
+  }
+  
+  msgSpan.textContent = message;
+  toast.className = 'bg-slate-800 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-3 opacity-0 transition-all duration-300 pointer-events-auto max-w-md';
+  if (type === 'error') toast.classList.add('bg-red-600');
+  else if (type === 'warning') toast.classList.add('bg-amber-600');
+  else toast.classList.add('bg-slate-800');
+  
+  toast.classList.add('show');
+  
+  _toastTimeout = setTimeout(() => hideToast(), 4000);
+}
+
+function hideToast() {
+  const toast = document.getElementById('toast-content');
+  toast.classList.remove('show');
+  if (_toastTimeout) {
+    clearTimeout(_toastTimeout);
+    _toastTimeout = null;
+  }
+}
+
+// On page load: try to restore session from localStorage
+window.addEventListener('load', function() {
+  let gisPollInterval = null;
+
+  function ensureGisInitialized() {
+    if (_gisInitialized) return;
+    if (typeof google !== 'undefined' && google.accounts) {
+      if (gisPollInterval) {
+        clearInterval(gisPollInterval);
+        gisPollInterval = null;
+      }
+      initGoogleSignIn();
+      _gisInitialized = true;
+    } else if (!gisPollInterval) {
+      gisPollInterval = setInterval(() => {
+        if (typeof google !== 'undefined' && google.accounts) {
+          clearInterval(gisPollInterval);
+          gisPollInterval = null;
+          initGoogleSignIn();
+          _gisInitialized = true;
+        }
+      }, 200);
+    }
+  }
+
+  ensureGisInitialized();
+  restoreSession();
+});
+
+function restoreSession() {
+  const storedToken = localStorage.getItem('aarambh_id_token');
+  if (!storedToken) {
+    showState('signed-out');
+    return;
+  }
+
+  _idToken = storedToken;
+  showState('loading');
+  setLoadingMsg('Restoring your session…');
+
+  let sessionTimeout = setTimeout(() => {
+    console.warn('Session restore timed out — falling back to signed-out.');
+    clearStoredToken();
+    showState('signed-out');
+  }, 15000);
+
+  callAPI('verifyLogin', { idToken: _idToken })
+    .then(userData => {
+      clearTimeout(sessionTimeout);
+      if (userData.status === 'success') {
+        setLoadingMsg('Loading your dashboard…');
+        return callAPI('getLatestAttempts', { idToken: _idToken })
+          .then(historyData => {
+            renderDashboard(userData, historyData.attempts || []);
+            showState('dashboard');
+            showUserPill(userData.userName, userData.userEmail);
+          });
+      } else if (userData.status === 'not_registered') {
+        renderNotRegistered(userData);
+        showState('not-registered');
+        // Do NOT call showUserPill here – keep sign-in button visible
+      } else {
+        clearStoredToken();
+        showState('signed-out');
+      }
+    })
+    .catch(err => {
+      clearTimeout(sessionTimeout);
+      console.warn('Session restore failed:', err);
+      clearStoredToken();
+      showState('signed-out');
+    });
+}
+
+function clearStoredToken() {
+  localStorage.removeItem('aarambh_id_token');
+  _idToken = null;
+}
+
+function initGoogleSignIn() {
+  if (_gisInitialized) return;
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleCredentialResponse,
+    auto_select: false,
+    cancel_on_tap_outside: true
+  });
+
+  if (!localStorage.getItem('aarambh_id_token')) {
+    google.accounts.id.prompt(notification => {
+      if (notification.isNotDisplayed()) {
+        console.log('One Tap not shown – user may need to click sign-in button.');
+      }
+    });
+  }
+  _gisInitialized = true;
+}
+
+function triggerGoogleSignIn() {
+  if (_signInCleanupTimeout) {
+    clearTimeout(_signInCleanupTimeout);
+    _signInCleanupTimeout = null;
+  }
+
+  if (typeof google === 'undefined' || !google.accounts) {
+    showToast('Google Sign-In is still loading. Please wait a moment.', 'warning');
+    return;
+  }
+
+  const tempDiv = document.createElement('div');
+  tempDiv.style.position = 'fixed';
+  tempDiv.style.top = '-9999px';
+  tempDiv.style.left = '-9999px';
+  document.body.appendChild(tempDiv);
+
+  google.accounts.id.renderButton(tempDiv, {
+    theme: 'outline',
+    size: 'large',
+    text: 'signin_with',
+    shape: 'pill'
+  });
+
+  const cleanup = () => {
+    if (tempDiv && tempDiv.parentNode) tempDiv.remove();
+    if (_signInCleanupTimeout) {
+      clearTimeout(_signInCleanupTimeout);
+      _signInCleanupTimeout = null;
+    }
+  };
+
+  const clickTimeout = setTimeout(() => {
+    try {
+      const googleBtn = tempDiv.querySelector('div[role="button"]');
+      if (googleBtn) {
+        googleBtn.click();
+      } else {
+        showToast('Could not open Google sign-in. Please refresh the page.', 'error');
+      }
+    } catch (e) {
+      console.warn('Error during Google Sign-In click:', e);
+    } finally {
+      _signInCleanupTimeout = setTimeout(() => {
+        cleanup();
+        _signInCleanupTimeout = null;
+      }, 2000);
+    }
+  }, 200);
+
+  _signInCleanupTimeout = clickTimeout;
+}
+
+async function handleCredentialResponse(response) {
+  _idToken = response.credential;
+  localStorage.setItem('aarambh_id_token', _idToken);
+
+  showState('loading');
+  setLoadingMsg('Verifying your account…');
+
+  try {
+    const userData = await callAPI('verifyLogin', { idToken: _idToken });
+
+    if (userData.status === 'success') {
+      setLoadingMsg('Loading your dashboard…');
+      const historyData = await callAPI('getLatestAttempts', { idToken: _idToken });
+      renderDashboard(userData, historyData.attempts || []);
+      showState('dashboard');
+      showUserPill(userData.userName, userData.userEmail);
+    } else if (userData.status === 'not_registered') {
+      renderNotRegistered(userData);
+      showState('not-registered');
+      // Do NOT show user pill
+    } else {
+      showToast('Error: ' + (userData.message || 'Unable to connect. Please try again.'), 'error');
+      clearStoredToken();
+      showState('signed-out');
+    }
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    if (window._loadingInterval) {
+      clearInterval(window._loadingInterval);
+      window._loadingInterval = null;
+    }
+    showToast('Could not connect to server. Please check your internet and try again.', 'error');
+    clearStoredToken();
+    showState('signed-out');
+  }
+}
+
+async function callAPI(action, params) {
+  const url = APPS_SCRIPT_URL;
+  const body = JSON.stringify({ action, ...params });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: body
+  });
+
+  if (!response.ok) throw new Error('HTTP ' + response.status);
+  return await response.json();
+}
+
+function renderNotRegistered(data) {
+  document.getElementById('nr-email').textContent = data.detectedEmail;
+  document.getElementById('reg-form-link').href = data.regForm || '#';
+}
+
+function renderDashboard(user, attempts) {
+  document.getElementById('dash-name').textContent = user.userName;
+  document.getElementById('dash-email').textContent = user.userEmail;
+  localStorage.setItem('aarambh_user_email', user.userEmail);
+  localStorage.setItem('aarambh_user_name', user.userName);
+
+  const tierBadge = document.getElementById('dash-tier-badge');
+  tierBadge.textContent = user.tier || 'Freemium';
+
+  const payBadge = document.getElementById('dash-payment-badge');
+  if (user.tier === 'Premium') {
+    if (user.paymentStatus === 'Active') {
+      payBadge.textContent = '✓ Payment Active';
+      payBadge.className = 'text-xs font-semibold px-3 py-1.5 rounded-full bg-green-500/20 text-green-200';
+    } else {
+      payBadge.textContent = '⚠ ' + (user.paymentStatus || 'Pending');
+      payBadge.className = 'text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-500/20 text-amber-200';
+    }
+  }
+
+  document.getElementById('stat-products').textContent = (user.products || []).length;
+  document.getElementById('stat-attempted').textContent = attempts.length;
+
+  if (attempts.length > 0) {
+    const percs = attempts.map(a => parseFloat(a.percentage) || 0);
+    document.getElementById('stat-best').textContent = Math.max(...percs).toFixed(1) + '%';
+    const avg = percs.reduce((s, v) => s + v, 0) / percs.length;
+    document.getElementById('stat-avg').textContent = avg.toFixed(1) + '%';
+  } else {
+    document.getElementById('stat-best').textContent = '—';
+    document.getElementById('stat-avg').textContent = '—';
+  }
+
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '';
+  const products = user.products || [];
+  if (products.length === 0) {
+    grid.innerHTML = '<p class="text-slate-400 text-sm col-span-2">No products found. Contact support@aarambhtimes.com</p>';
+  } else {
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'product-card' + (p.isLocked ? ' locked' : '');
+
+      const tests = (p.tests && p.tests.length > 0) ? p.tests : null;
+      const testCount = tests ? tests.length : (parseInt(p.totalTests) || 1);
+
+      let actionHtml = '';
+      if (p.isLocked) {
+        actionHtml = `<div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400">${testCount} Quiz${testCount !== 1 ? 'zes' : ''}</span>
+          <span class="text-xs text-amber-600 font-medium">Contact support to activate</span>
+        </div>`;
+      } else if (!tests || tests.length <= 1) {
+        const t0 = tests ? tests[0] : null;
+        const tNum = t0 ? t0.testNumber : 1;
+        const tName = t0 ? t0.testName : (p.isFree ? 'Free Mock Quiz' : 'Test 1');
+        const singleLink = `quiz.html?productId=${encodeURIComponent(p.id)}&testNumber=${tNum}&testName=${encodeURIComponent(tName)}`;
+        actionHtml = `<div class="flex items-center justify-between">
+          <span class="text-xs text-slate-400">${testCount} Quiz</span>
+          <a href="${singleLink}" class="bg-[#1e40af] text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">Start Quiz →</a>
+        </div>`;
+      } else {
+        const rows = tests.map(t => {
+          const tLink = `quiz.html?productId=${encodeURIComponent(p.id)}&testNumber=${t.testNumber}&testName=${encodeURIComponent(t.testName)}`;
+          return `<a href="${tLink}" class="flex items-center justify-between w-full px-3 py-2.5 rounded-xl border border-slate-200 hover:border-[#1e40af] hover:bg-blue-50 transition-colors group">
+            <span class="text-sm font-medium text-slate-700 group-hover:text-[#1e40af]">${escHtml(t.testName)}</span>
+            <span class="text-xs font-bold text-[#1e40af]">Start →</span>
+          </a>`;
+        }).join('');
+        actionHtml = `<div class="flex items-center justify-between mb-2">
+          <span class="text-xs text-slate-400">${testCount} Quizzes</span>
+        </div>
+        <div class="flex flex-col gap-2">${rows}</div>`;
+      }
+
+      card.innerHTML = `<div class="flex items-start justify-between mb-3">
+          <span class="text-xs font-bold px-2.5 py-1 rounded-full ${p.isFree ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}">${p.isFree ? 'FREE' : 'PURCHASED'}</span>
+        </div>
+        <h4 class="font-bold text-slate-900 mb-1">${escHtml(p.name)}</h4>
+        <p class="text-sm text-slate-500 mb-4">${escHtml(p.description || 'UPSC Prelims Paper 1 • हिंदी माध्यम')}</p>
+        ${actionHtml}`;
+
+      grid.appendChild(card);
+    });
+  }
+
+  const wrap = document.getElementById('quiz-history-wrap');
+  if (attempts.length === 0) {
+    wrap.innerHTML = `<div class="p-10 text-center">
+      <p class="text-4xl mb-3">📝</p>
+      <p class="text-slate-500 font-medium">No quizzes attempted yet</p>
+      <p class="text-slate-400 text-sm mt-1">Attempt a quiz to see your scorecard here.</p>
+    </div>`;
+  } else {
+    const cards = attempts.map(a => {
+      const pct = parseFloat(a.percentage) || 0;
+      const correct = parseInt(a.correct) || 0;
+      const wrong = parseInt(a.wrong) || 0;
+      const skipped = parseInt(a.skipped) || 0;
+      const total = parseInt(a.total) || 0;
+      const score = parseFloat(a.score) || 0;
+      const maxMarks = total * 2;
+
+      const circleColor = pct >= 66 ? '#16a34a' : pct >= 40 ? '#d97706' : '#dc2626';
+      const retakeLink = `quiz.html?productId=${encodeURIComponent(a.productId)}&testNumber=${encodeURIComponent(a.testNumber)}&testName=${encodeURIComponent(a.testName)}`;
+      const lastDate = a.lastUpdated
+        ? new Date(a.lastUpdated).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        : '—';
+
+      return `<div class="bg-white rounded-2xl border border-slate-100 p-5 mb-4">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <p class="text-xs font-semibold text-[#1e40af] uppercase tracking-wider mb-0.5">${escHtml(a.productId)}</p>
+            <h4 class="font-bold text-slate-900">${escHtml(a.testName)}</h4>
+          </div>
+          <span class="text-xs text-slate-400">Last: ${lastDate}</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <div class="bg-green-50 rounded-xl p-3 text-center">
+            <p class="text-xs font-semibold text-green-700 mb-1">✓ Correct</p>
+            <p class="text-xl font-bold text-green-700">${correct}<span class="text-xs font-normal text-green-500"> / ${total}</span></p>
+            <p class="text-xs text-green-600 mt-0.5">+${correct * 2} marks</p>
+          </div>
+          <div class="bg-red-50 rounded-xl p-3 text-center">
+            <p class="text-xs font-semibold text-red-700 mb-1">✗ Wrong</p>
+            <p class="text-xl font-bold text-red-700">${wrong}<span class="text-xs font-normal text-red-400"> / ${total}</span></p>
+            <p class="text-xs text-red-600 mt-0.5">−${(wrong * 2/3).toFixed(2)} marks</p>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3 text-center">
+            <p class="text-xs font-semibold text-slate-600 mb-1">— Skipped</p>
+            <p class="text-xl font-bold text-slate-600">${skipped}<span class="text-xs font-normal text-slate-400"> / ${total}</span></p>
+            <p class="text-xs text-slate-500 mt-0.5">0 marks</p>
+          </div>
+          <div class="bg-blue-50 rounded-xl p-3 text-center">
+            <p class="text-xs font-semibold text-[#1e40af] mb-1">Score</p>
+            <p class="text-xl font-bold text-[#1e40af]">${score}<span class="text-xs font-normal text-blue-400"> / ${maxMarks}</span></p>
+            <p class="text-xs text-blue-600 mt-0.5">${pct.toFixed(1)}%</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex gap-4">
+            <div class="text-center">
+              <p class="text-xs text-slate-400">Accuracy</p>
+              <p class="text-sm font-bold" style="color:${circleColor}">${total - skipped > 0 ? Math.round(correct / (total - skipped) * 100) : 0}%</p>
+            </div>
+            <div class="text-center">
+              <p class="text-xs text-slate-400">Time Taken</p>
+              <p class="text-sm font-bold text-slate-700">${escHtml(a.timeTaken || '—')}</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="quiz.html?productId=${encodeURIComponent(a.productId)}&testNumber=${encodeURIComponent(a.testNumber)}&testName=${encodeURIComponent(a.testName)}&mode=review&answersJSON=${encodeURIComponent(a.answersJSON || '{}')}" class="bg-slate-100 text-slate-700 text-xs font-semibold px-4 py-2 rounded-xl hover:bg-slate-200 transition-colors">Review Answers</a>
+            <a href="${retakeLink}" class="bg-[#1e40af] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors">Attempt Again →</a>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    wrap.innerHTML = cards;
+  }
+}
+
+// ── UI helpers ─────────────────────────────────────────────────────────────
+function showState(name) {
+  if (window._loadingInterval) {
+    clearInterval(window._loadingInterval);
+    window._loadingInterval = null;
+  }
+  if (_signInCleanupTimeout) {
+    clearTimeout(_signInCleanupTimeout);
+    _signInCleanupTimeout = null;
+  }
+
+  const loadingEl = document.getElementById('state-loading');
+  const signedOutEl = document.getElementById('state-signed-out');
+  const notRegEl = document.getElementById('state-not-registered');
+  const dashEl = document.getElementById('state-dashboard');
+  const headerSignin = document.getElementById('header-signin');
+  const userPill = document.getElementById('user-pill');
+
+  loadingEl.style.display = 'none';
+  signedOutEl.style.display = 'none';
+  notRegEl.style.display = 'none';
+  dashEl.style.display = 'none';
+
+  if (name === 'loading') {
+    loadingEl.style.display = 'flex';
+  } else if (name === 'signed-out') {
+    signedOutEl.style.display = 'block';
+  } else if (name === 'not-registered') {
+    notRegEl.style.display = 'block';
+  } else if (name === 'dashboard') {
+    dashEl.style.display = 'block';
+  }
+
+  const isLoading = (name === 'loading');
+  const footer = document.querySelector('footer');
+  if (footer) footer.style.display = isLoading ? 'none' : '';
+
+  if (headerSignin) headerSignin.style.display = isLoading ? 'none' : '';
+  if (userPill) userPill.style.display = isLoading ? 'none' : '';
+
+  // For non-loading states, visibility of header elements will be set by subsequent calls (showUserPill, etc.)
+}
+
+function setLoadingMsg(msg) {
+  const statusEl = document.getElementById('loading-status');
+  if (statusEl) statusEl.textContent = msg || 'Loading...';
+
+  const facts = [
+    "Article 1 calls India a \"Union of States\" — the word 'Federation' was deliberately omitted by the Drafting Committee.",
+    "The 42nd Amendment (1976) brought the most extensive changes to the Constitution — often called the 'Mini-Constitution.'",
+    "India borrowed the Directive Principles from the Irish Constitution, which had taken them from Spain.",
+    "Article 324 guarantees the independence of the Election Commission — a bedrock of Indian democracy.",
+    "Satyendranath Tagore became the first Indian ICS officer in 1863.",
+    "The Dandi March spanned exactly 24 days and roughly 241 miles, ending April 6, 1930.",
+    "The original Constitution was not printed — handwritten in flowing italic calligraphy by Prem Behari Narain Raizada.",
+    "The organised mutiny of 1857 officially began in Meerut on May 10 — Mangal Pandey's action was earlier, on March 29.",
+    "In 2022, India officially overtook the United Kingdom to become the 5th largest economy in the world.",
+    "The RBI started as a private shareholders' bank in 1935 — nationalised on January 1, 1949.",
+    "The Sundarbans is the world's largest mangrove forest — 40% in India, 60% in Bangladesh.",
+    "The Western Ghats are significantly older than the Himalayas — one of the world's eight biodiversity hotspots.",
+    "Out of ~10 lakh applicants every year, only about 0.2% make the final recommended list.",
+    "Most successful candidates clear the exam in their 3rd or 4th attempt — persistence is the pattern.",
+    "At LBSNAA, your previous degree — IIT, MBBS, or BA — matters less than your commitment to service.",
+    "The average age of final list candidates is 26–28, but candidates have cleared in their late 30s and early 40s."
+  ];
+
+  const factEl = document.getElementById('loading-fact');
+  if (!factEl) return;
+
+  if (window._loadingInterval) {
+    clearInterval(window._loadingInterval);
+    window._loadingInterval = null;
+  }
+
+  const shuffled = facts.slice().sort(() => Math.random() - 0.5);
+  let fi = 0;
+  factEl.textContent = shuffled[0];
+  factEl.style.opacity = '1';
+
+  window._loadingInterval = setInterval(() => {
+    fi = (fi + 1) % shuffled.length;
+    factEl.style.opacity = '0';
+    setTimeout(() => {
+      factEl.textContent = shuffled[fi];
+      factEl.style.opacity = '1';
+    }, 300);
+  }, 3000);
+}
+
+function showUserPill(name, email) {
+  document.getElementById('user-pill').classList.remove('hidden');
+  document.getElementById('user-pill').style.display = 'flex';
+  document.getElementById('header-signin').style.display = 'none';
+  const initials = (name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('user-name-header').textContent = name;
+}
+
+function signOut() {
+  if (_signInCleanupTimeout) {
+    clearTimeout(_signInCleanupTimeout);
+    _signInCleanupTimeout = null;
+  }
+  _idToken = null;
+  clearStoredToken();
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.disableAutoSelect();
+  }
+  document.getElementById('user-pill').style.display = 'none';
+  document.getElementById('header-signin').style.display = '';
+  showState('signed-out');
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+window.addEventListener('beforeunload', function() {
+  if (_signInCleanupTimeout) clearTimeout(_signInCleanupTimeout);
+});
+</script>
+
+</body>
+</html>
