@@ -107,6 +107,12 @@
     }
     .fade-up { animation: fadeUp 0.4s ease forwards; }
 
+    /* ── Smooth fade for loading text ── */
+    #loading-fact,
+    #loading-quote {
+      transition: opacity 0.3s ease;
+    }
+
     /* ── WhatsApp float ──
     .wa-float { animation: float 3s ease-in-out infinite; }
     @keyframes float {
@@ -152,23 +158,33 @@
      STATE: LOADING (Absolutely Centered Overlay)
 ═══════════════════════════════════════════════════ -->
 <div id="state-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
-  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; text-align: center; max-width: 28rem; width: 100%;">
-    
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.75rem; text-align: center; max-width: 26rem; width: 100%;">
+
     <!-- Premium Spinner with glow -->
     <div style="position: relative;">
       <div style="position: absolute; inset: 0; background: #1e40af; opacity: 0.1; border-radius: 9999px; filter: blur(24px); animation: pulse 2s infinite;"></div>
       <div class="spinner-premium"></div>
     </div>
 
-    <!-- Dynamic text -->
-    <div>
-      <p id="loading-title" style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin: 0;">Just a moment</p>
-      <p id="loading-subtitle" style="font-size: 0.875rem; color: #64748b; margin-top: 0.25rem;">Preparing your dashboard</p>
+    <!-- Rotating fact -->
+    <div style="min-height: 3.5rem; display: flex; align-items: center; justify-content: center;">
+      <p id="loading-fact"
+         style="font-size: 0.8rem; color: #475569; line-height: 1.6; margin: 0;
+                padding: 0.65rem 1rem; background: #f1f5f9; border-radius: 0.75rem;
+                border-left: 3px solid #1e40af;">
+      </p>
     </div>
 
     <!-- Progress bar -->
-    <div style="width: 20rem; max-width: 280px; height: 0.5rem; background: #e2e8f0; border-radius: 1.5rem; overflow: hidden;">
+    <div style="width: 100%; max-width: 280px; height: 0.4rem; background: #e2e8f0; border-radius: 1.5rem; overflow: hidden;">
       <div style="height: 100%; background: linear-gradient(to right, #1e40af, #3b82f6); border-radius: 1.5rem; animation: loading-bar 1.8s ease-in-out infinite;"></div>
+    </div>
+
+    <!-- Rotating quote -->
+    <div style="min-height: 3rem; display: flex; align-items: center; justify-content: center; max-width: 22rem;">
+      <p id="loading-quote"
+         style="font-size: 0.75rem; color: #94a3b8; font-style: italic; line-height: 1.6; margin: 0;">
+      </p>
     </div>
 
   </div>
@@ -796,10 +812,8 @@ function renderDashboard(user, attempts) {
 
 // ── UI helpers ─────────────────────────────────────────────────────────────
 function showState(name) {
-  if (window._loadingInterval) {
-    clearInterval(window._loadingInterval);
-    window._loadingInterval = null;
-  }
+  if (window._loadingInterval)      { clearInterval(window._loadingInterval);      window._loadingInterval = null; }
+  if (window._loadingQuoteInterval) { clearInterval(window._loadingQuoteInterval); window._loadingQuoteInterval = null; }
 
   var states = ['loading', 'signed-out', 'not-registered', 'dashboard'];
   states.forEach(function(s) {
@@ -818,33 +832,79 @@ function showState(name) {
 }
 
 function setLoadingMsg(msg) {
-  const titles = [
-    { title: "Just a moment", subtitle: "Preparing your dashboard" },
-    { title: "Almost there", subtitle: "Loading your progress" },
-    { title: "Getting things ready", subtitle: "Fetching your test series" },
-    { title: "Hold tight", subtitle: "Personalizing your experience" }
+  // All apostrophes properly escaped or wrapped in double quotes
+  var facts = [
+    // Polity
+    "Article 1 calls India a \"Union of States\" — the word 'Federation' was deliberately omitted by the Drafting Committee.",
+    "The 42nd Amendment (1976) brought the most extensive changes to the Constitution — often called the 'Mini-Constitution.'",
+    "India borrowed the Directive Principles from the Irish Constitution, which had taken them from Spain.",
+    "Article 324 guarantees the independence of the Election Commission — a bedrock of Indian democracy.",
+    // History
+    "Satyendranath Tagore became the first Indian ICS officer in 1863.",
+    "The Dandi March spanned exactly 24 days and roughly 241 miles, ending April 6, 1930.",
+    "The original Constitution was not printed — handwritten in flowing italic calligraphy by Prem Behari Narain Raizada.",
+    "The organised mutiny of 1857 officially began in Meerut on May 10 — Mangal Pandey's action was earlier, on March 29.",
+    // Economy & Geography
+    "In 2022, India officially overtook the United Kingdom to become the 5th largest economy in the world.",
+    "The RBI started as a private shareholders' bank in 1935 — nationalised on January 1, 1949.",
+    "The Sundarbans is the world's largest mangrove forest — 40% in India, 60% in Bangladesh.",
+    "The Western Ghats are significantly older than the Himalayas — one of the world's eight biodiversity hotspots.",
+    // UPSC Process
+    "Out of ~10 lakh applicants every year, only about 0.2% make the final recommended list.",
+    "Most successful candidates clear the exam in their 3rd or 4th attempt — persistence is the pattern.",
+    "At LBSNAA, your previous degree — IIT, MBBS, or BA — matters less than your commitment to service.",
+    "The average age of final list candidates is 26–28, but candidates have cleared in their late 30s and early 40s."
   ];
-  
-  let idx = 0;
-  const titleEl = document.getElementById('loading-title');
-  const subtitleEl = document.getElementById('loading-subtitle');
-  
-  if (titleEl && subtitleEl) {
-    // Set initial message
-    titleEl.textContent = titles[0].title;
-    subtitleEl.textContent = titles[0].subtitle;
-    
-    // Clear any existing interval before starting a new one
-    if (window._loadingInterval) {
-      clearInterval(window._loadingInterval);
-    }
-    
-    window._loadingInterval = setInterval(() => {
-      idx = (idx + 1) % titles.length;
-      titleEl.textContent = titles[idx].title;
-      subtitleEl.textContent = titles[idx].subtitle;
-    }, 1800);
+
+  var quotes = [
+    '"UPSC की तैयारी एक मैराथन है, 100 मीटर की दौड़ नहीं — धैर्य ही सबसे बड़ी ताकत है।"',
+    '"Consistency beats intensity. Showing up every day matters more than one perfect study session."',
+    '"The Constitution is not a mere lawyers\' document — it is a vehicle of life."',
+    '"Revision is not repetition. It is the process of converting information into instinct."',
+    '"हर Mock Test एक असली परीक्षा है — अगर इसे गंभीरता से नहीं लिया, तो असली परीक्षा में धैर्य कहाँ से आएगा?"',
+    '"An IAS officer\'s first duty is to the Constitution, not to the political executive."',
+    '"सफलता का कोई शॉर्टकट नहीं — मेहनत की सड़क ही एकमात्र रास्ता है।"'
+  ];
+
+  var factEl  = document.getElementById('loading-fact');
+  var quoteEl = document.getElementById('loading-quote');
+
+  if (!factEl || !quoteEl) return;
+
+  // Clear any existing intervals
+  if (window._loadingInterval)      { clearInterval(window._loadingInterval);      window._loadingInterval = null; }
+  if (window._loadingQuoteInterval) { clearInterval(window._loadingQuoteInterval); window._loadingQuoteInterval = null; }
+
+  // Shuffle facts so each session feels different
+  var shuffled = facts.slice().sort(function() { return Math.random() - 0.5; });
+  var fi = 0;
+  var qi = Math.floor(Math.random() * quotes.length);
+
+  function fadeSwap(el, newText) {
+    el.style.opacity = '0';
+    setTimeout(function() {
+      el.textContent = newText;
+      el.style.opacity = '1';
+    }, 300); // match transition duration
   }
+
+  // Set initial values immediately
+  factEl.textContent  = shuffled[0];
+  factEl.style.opacity = '1';
+  quoteEl.textContent = quotes[qi];
+  quoteEl.style.opacity = '1';
+
+  // Rotate facts every 3s
+  window._loadingInterval = setInterval(function() {
+    fi = (fi + 1) % shuffled.length;
+    fadeSwap(factEl, shuffled[fi]);
+  }, 3000);
+
+  // Rotate quotes every 5s
+  window._loadingQuoteInterval = setInterval(function() {
+    qi = (qi + 1) % quotes.length;
+    fadeSwap(quoteEl, quotes[qi]);
+  }, 5000);
 }
 
 function showUserPill(name, email) {
