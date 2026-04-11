@@ -122,7 +122,8 @@
       grid-column: 1;
       align-self: start;
       max-width: 100%;
-      overflow-x: hidden;
+      /* overflow-x: hidden removed — it clips images on mobile after stacking
+         to a single column. Images are constrained via max-width on the img tag. */
     }
 
     /* Right column: options panel */
@@ -135,7 +136,8 @@
     /* Image panel */
     .qimg-panel{width:100%;background:transparent;border:none;padding:0;}
     .qimg-box{
-      width:100%;background:transparent;display:block;overflow-x:hidden;
+      width:100%;background:transparent;display:block;
+      /* overflow-x: hidden removed — clips images on mobile viewports */
     }
     .qimg-box img{
       width:100%;height:auto;display:block;max-width:100%;max-height:70vh;object-fit:contain;border-radius:0;box-shadow:none;
@@ -307,11 +309,16 @@
       .qwrap {
         flex: 1;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* smooth momentum scrolling on iOS */
         display: flex;
         flex-direction: column;
         padding: 16px;
         gap: 20px;
       }
+      /* Ensure the image container has at least some height on mobile so
+         iOS doesn't collapse it to zero before the image fully loads */
+      .qimg-box { min-height: 40px; }
+      .qimg-box img { min-height: 40px; }
       .abar { flex-shrink: 0; }
       .navbar { flex-shrink: 0; }
       .qmeta { display: flex; width: 100%; }
@@ -353,16 +360,27 @@
     .qimg-box img {
       pointer-events: none;
       -webkit-touch-callout: none;
+      /* Force GPU compositing layer so iOS Safari paints the image
+         even when a sibling/pseudo overlay shares the stacking context */
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: transform;
     }
+    /* Desktop-only transparent overlay (blocks right-click / long-press save).
+       MUST be hidden on mobile — a position:absolute transparent overlay over
+       pointer-events:none img inside overflow:hidden is a well-known iOS Safari
+       rendering bug that causes the image to not paint at all. */
     .qimg-box::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: transparent;
       pointer-events: auto;
+    }
+    @media (max-width: 800px) {
+      /* Remove the overlay on mobile — images won't render on iOS WebKit with it */
+      .qimg-box::after { display: none; }
     }
   </style>
 </head>
