@@ -666,13 +666,14 @@ async function handleCredentialResponse(response) {
   }
 }
 
+// ✅ FIXED CORS ISSUE: Changed Content-Type from 'application/json' to 'text/plain'
 async function callAPI(action, params) {
   const url = APPS_SCRIPT_URL;
   const body = JSON.stringify({ action, ...params });
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },  // ← Was 'application/json'
     body: body
   });
 
