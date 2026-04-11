@@ -185,7 +185,7 @@
     .bsubmit:hover{background:#15803d}
 
     /* Sidebar */
-    .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+    .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
     .sb-usr{background:var(--navy);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
     .sb-av{width:38px;height:38px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
     .sb-nm{font-size:13px;font-weight:600;color:#fff;line-height:1.3}
@@ -279,24 +279,28 @@
       .btn-exit { padding: 8px 16px; min-height: 44px; }
 
       .qmain {
-        overflow-y: auto;
         display: flex;
         flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
       }
       .secbar {
         position: sticky;
         top: 0;
         z-index: 5;
         background: #f8fafc;
+        flex-shrink: 0;
       }
       .qwrap {
-        flex: 0 0 auto;
-        overflow-y: visible;
+        flex: 1;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
         padding: 16px;
         gap: 20px;
       }
+      .abar { flex-shrink: 0; }
+      .navbar { flex-shrink: 0; }
       .qmeta { display: flex; width: 100%; }
       .q-left-col, .q-right-col { width: 100%; max-width: 100%; }
       .opt-panel { padding: 16px 12px; }
@@ -841,7 +845,7 @@ function saveAndNext(){
 }
 function navPrev(){ if(S.currentQ>0) goTo(S.currentQ-1); }
 function navNext(){ if(S.currentQ<S.questions.length-1) goTo(S.currentQ+1); }
-function goTo(i){ S.visited[i]=true; renderQ(i); }
+function goTo(i){ S.visited[i]=true; renderQ(i); const qw=el('qwrap'); if(qw) qw.scrollTop=0; }
 
 function buildPalette(){
   const g=el('palGrid'); g.innerHTML='';
