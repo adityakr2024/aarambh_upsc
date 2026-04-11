@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <!-- iOS image protection meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>Aarambh UPSC – Online Test</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -338,6 +341,29 @@
       /* Hide navlbl so Prev + Next + Submit fit on one row at 360px */
       .navlbl { display: none; }
     }
+
+    /* --- Security & Anti-Copy Measures --- */
+    .qnum-lbl, .qmarks-lbl, .opt-lbl-txt, .navlbl, .tb-test, .tb-user {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .qimg-box {
+      position: relative;
+    }
+    .qimg-box img {
+      pointer-events: none;
+      -webkit-touch-callout: none;
+    }
+    .qimg-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
@@ -357,7 +383,7 @@
     </div>
     <p style="color:var(--red);font-size:12px">⚠ Starting fresh will permanently clear saved progress.</p>
     <div class="modal-actions">
-      <button class="btn-sec btn-danger" style="color: white;" onclick="startFresh()">Start Fresh</button>
+      <button class="btn-sec btn-danger" onclick="startFresh()">Start Fresh</button>
       <button class="btn-pri" onclick="resumeSession()">Resume →</button>
     </div>
   </div>
@@ -645,6 +671,36 @@ window.addEventListener('DOMContentLoaded', async () => {
     } else {
       btn.classList.remove('show');
       closeMobilePalette();
+    }
+  });
+
+  // ---------- Security: Disable right-click & image drag ----------
+  document.addEventListener('contextmenu', (e) => {
+    // Allow context menu on input fields and textareas for usability
+    if (e.target.matches('input, textarea, [contenteditable="true"]')) {
+      return true;
+    }
+    e.preventDefault();
+    return false;
+  });
+
+  document.addEventListener('dragstart', (e) => {
+    if (e.target.tagName === 'IMG') {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // Optional: Disable certain key combos (F12, Ctrl+Shift+I, Ctrl+U)
+  document.addEventListener('keydown', (e) => {
+    // Block F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+      (e.ctrlKey && e.key === 'U')
+    ) {
+      e.preventDefault();
+      return false;
     }
   });
 });
