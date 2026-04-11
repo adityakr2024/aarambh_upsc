@@ -151,7 +151,7 @@
 <!-- ══════════════════════════════════════════════
      STATE: LOADING (Absolutely Centered Overlay)
 ═══════════════════════════════════════════════════ -->
-<div id="state-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+<div id="state-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; text-align: center; max-width: 28rem; width: 100%;">
     
     <!-- Premium Spinner with glow -->
@@ -453,8 +453,16 @@ function restoreSession() {
   showState('loading');
   setLoadingMsg('Restoring your session…');
 
+  // Safety net: if the API never responds, fall back to signed-out after 15s
+  var sessionTimeout = setTimeout(function() {
+    console.warn('Session restore timed out — falling back to signed-out.');
+    clearStoredToken();
+    showState('signed-out');
+  }, 15000);
+
   callAPI('verifyLogin', { idToken: _idToken })
     .then(function(userData) {
+      clearTimeout(sessionTimeout);
       if (userData.status === 'success') {
         setLoadingMsg('Loading your dashboard…');
         return callAPI('getLatestAttempts', { idToken: _idToken })
@@ -474,6 +482,7 @@ function restoreSession() {
       }
     })
     .catch(function(err) {
+      clearTimeout(sessionTimeout);
       console.warn('Session restore failed:', err);
       clearStoredToken();
       showState('signed-out');
@@ -794,7 +803,12 @@ function showState(name) {
 
   var states = ['loading', 'signed-out', 'not-registered', 'dashboard'];
   states.forEach(function(s) {
-    document.getElementById('state-' + s).style.display = s === name ? 'block' : 'none';
+    var el = document.getElementById('state-' + s);
+    if (s === name) {
+      el.style.display = (s === 'loading') ? 'flex' : 'block';
+    } else {
+      el.style.display = 'none';
+    }
   });
 
   var footer = document.querySelector('footer');
