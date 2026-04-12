@@ -884,10 +884,29 @@ function showState(name) {
   const footer = document.querySelector('footer');
   if (footer) footer.style.display = isLoading ? 'none' : '';
 
-  if (headerSignin) headerSignin.style.display = isLoading ? 'none' : '';
-  if (userPill) userPill.style.display = isLoading ? 'none' : '';
-
-  // For non-loading states, visibility of header elements will be set by subsequent calls (showUserPill, etc.)
+  // ========== BUG FIX: Explicitly control header buttons for each state ==========
+  if (name === 'loading') {
+    if (headerSignin) headerSignin.style.display = 'none';
+    if (userPill) userPill.style.display = 'none';
+  } 
+  else if (name === 'signed-out') {
+    if (headerSignin) headerSignin.style.display = '';   // show sign-in button
+    if (userPill) {
+      userPill.style.display = 'none';
+      userPill.classList.add('hidden');                 // ensure hidden class persists
+    }
+  }
+  else if (name === 'not-registered') {
+    if (headerSignin) headerSignin.style.display = '';   // show sign-in button
+    if (userPill) {
+      userPill.style.display = 'none';
+      userPill.classList.add('hidden');
+    }
+  }
+  else if (name === 'dashboard') {
+    if (headerSignin) headerSignin.style.display = 'none';
+    // userPill will be shown later by showUserPill() – do not set display here
+  }
 }
 
 function setLoadingMsg(msg) {
@@ -902,15 +921,10 @@ function setLoadingMsg(msg) {
     "Satyendranath Tagore became the first Indian ICS officer in 1863.",
     "The Dandi March spanned exactly 24 days and roughly 241 miles, ending April 6, 1930.",
     "The original Constitution was not printed — handwritten in flowing italic calligraphy by Prem Behari Narain Raizada.",
-    "The organised mutiny of 1857 officially began in Meerut on May 10 — Mangal Pandey's action was earlier, on March 29.",
-    "In 2022, India officially overtook the United Kingdom to become the 5th largest economy in the world.",
     "The RBI started as a private shareholders' bank in 1935 — nationalised on January 1, 1949.",
     "The Sundarbans is the world's largest mangrove forest — 40% in India, 60% in Bangladesh.",
     "The Western Ghats are significantly older than the Himalayas — one of the world's eight biodiversity hotspots.",
-    "Out of ~10 lakh applicants every year, only about 0.2% make the final recommended list.",
-    "Most successful candidates clear the exam in their 3rd or 4th attempt — persistence is the pattern.",
     "At LBSNAA, your previous degree — IIT, MBBS, or BA — matters less than your commitment to service.",
-    "The average age of final list candidates is 26–28, but candidates have cleared in their late 30s and early 40s."
   ];
 
   const factEl = document.getElementById('loading-fact');
@@ -937,8 +951,9 @@ function setLoadingMsg(msg) {
 }
 
 function showUserPill(name, email) {
-  document.getElementById('user-pill').classList.remove('hidden');
-  document.getElementById('user-pill').style.display = 'flex';
+  const userPill = document.getElementById('user-pill');
+  userPill.classList.remove('hidden');
+  userPill.style.display = 'flex';
   document.getElementById('header-signin').style.display = 'none';
   const initials = (name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
   document.getElementById('user-avatar').textContent = initials;
@@ -955,8 +970,13 @@ function signOut() {
   if (typeof google !== 'undefined' && google.accounts) {
     google.accounts.id.disableAutoSelect();
   }
-  document.getElementById('user-pill').style.display = 'none';
+  
+  // ========== BUG FIX: Ensure user pill is fully hidden ==========
+  const userPill = document.getElementById('user-pill');
+  userPill.classList.add('hidden');
+  userPill.style.display = 'none';
   document.getElementById('header-signin').style.display = '';
+  
   showState('signed-out');
 }
 
