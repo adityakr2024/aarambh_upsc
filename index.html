@@ -277,9 +277,9 @@
 
       <!-- Mini Test Series Card -->
       <div class="product-card border-amber-200 bg-gradient-to-br from-amber-50 to-white">
-        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">PRODUCT #2 • Paid</span>
+        <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-4">✦ Test Series • Paid</span>
         <h3 class="text-xl font-bold text-slate-900 mb-1">Mini Test Series</h3>
-        <p class="text-slate-500 text-sm mb-4">5 Quizzes Bundle • हिंदी माध्यम UPSC Prelims Paper 1</p>
+        <p class="text-slate-500 text-sm mb-4">5 Mock Tests • हिंदी माध्यम UPSC Prelims Paper 1</p>
         <div class="flex gap-4 mb-5">
           <div class="text-center">
             <p class="text-2xl font-bold text-slate-900">5</p>
@@ -303,9 +303,9 @@
     </div>
 
     <!-- Upcoming -->
-    <div class="mt-6 bg-white border border-dashed border-slate-300 rounded-2xl p-5 text-center">
-      <span class="text-slate-400 text-sm font-medium">🔜 Current Affairs — Coming soon on aarambhtimes.in</span>
-    </div>
+<!--    <div class="mt-6 bg-white border border-dashed border-slate-300 rounded-2xl p-5 text-center"> -->
+<!--      <span class="text-slate-400 text-sm font-medium">🔜 Current Affairs — Coming soon on aarambhtimes.in</span>  -->
+ <!--      </div> -->
   </section>
 
 </div>
@@ -408,6 +408,13 @@
   </div>
 </div>
 <!-- ══ END STATE: DASHBOARD ══ -->
+
+<!-- Terms & Disclaimer notice (surgically added) -->
+<div class="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
+  <p style="font-size:14px; background:#f8f9fa; padding:12px 20px; border-radius:8px; border-left:4px solid #1a3c34; color:#333;">
+    By using this UPSC mock test dashboard you agree to our <a href="https://www.aarambhtimes.in/p/terms-and-conditions.html"> <b>Terms & Conditions</b>b</a> and <a href="https://www.aarambhtimes.in/p/disclaimer.html"><b>Disclaimer<b></a>. All tests are for practice and self-evaluation only. We do not guarantee any UPSC result or rank.
+  </p>
+</div>
 
 <!-- Footer -->
 <footer class="bg-slate-900 text-slate-400 py-10 mt-10">
@@ -1069,6 +1076,18 @@ window.addEventListener('beforeunload', function() {
 })();
 </script>
 <!-- ========== END ACTIVITY LOGGER ========== -->
+
+<!-- Cookie Consent Banner (surgically added) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (!localStorage.getItem('cookieConsent')) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a3c34;color:#fff;padding:15px;text-align:center;font-size:14px;z-index:9999;';
+    banner.innerHTML = `We use cookies to improve your experience and analyze test performance. By continuing, you agree to our <a href="https://www.aarambhtimes.in/p/privacy-policy.html" style="color:#ffd700;">Privacy Policy</a>. <button onclick="this.parentElement.style.display='none';localStorage.setItem('cookieConsent','true');" style="margin-left:10px;padding:8px 16px;background:#ffd700;color:#1a3c34;border:none;border-radius:4px;cursor:pointer;">Accept</button>`;
+    document.body.appendChild(banner);
+  }
+});
+</script>
 
 </body>
 </html>
