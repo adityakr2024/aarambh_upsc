@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <!-- iOS image protection meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <title>Aarambh UPSC – Online Test</title>
@@ -18,17 +17,15 @@
       --st-nv:#e2e8f0;--st-na:#ef4444;--st-ans:#16a34a;--st-mrk:#7c3aed;--st-ma:#d97706;
       --hh:56px;
     }
-    /* Fixed scrolling: prevent body scroll, use single container */
     html,body{
       height:100%;font-family:'IBM Plex Sans',sans-serif;color:var(--text);background:#e8edf4;overflow:hidden;margin:0;
-      -webkit-text-size-adjust:100%;   /* Prevent font inflation in mobile Desktop View */
+      -webkit-text-size-adjust:100%;
       text-size-adjust:100%;
     }
     @media (max-width: 800px) {
       html,body { overflow: hidden; }
     }
 
-    /* Focus visible for accessibility */
     :focus-visible{outline:3px solid var(--blue2);outline-offset:2px;}
 
     /* Overlays, modals, loader */
@@ -59,10 +56,8 @@
     #errScreen p{font-size:14px;color:#94a3b8;max-width:400px;line-height:1.7;margin-bottom:24px}
     .btn-err{padding:12px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 
-    /* Quiz shell */
     #qshell{height:100vh;display:flex;flex-direction:column}
 
-    /* Top bar – improved for mobile wrap and tap targets */
     .topbar{height:auto;min-height:var(--hh);background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:10;flex-wrap:wrap;gap:8px 0}
     .tb-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
     .tb-brand{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.4px}
@@ -82,17 +77,14 @@
     .btn-exit{background:transparent;border:1.5px solid #475569;color:#cbd5e1;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;min-height:44px}
     .btn-exit:hover{background:#1e293b;border-color:#94a3b8;color:#fff}
 
-    /* Body grid */
     .qbody{flex:1;display:grid;grid-template-columns:1fr 308px;min-height:0}
 
-    /* Main panel */
     .qmain{display:flex;flex-direction:column;min-height:0;min-width:0;background:#fff}
     .secbar{background:#f8fafc;border-bottom:1px solid var(--border);display:flex;overflow-x:auto;flex-shrink:0;padding:0 4px}
     .secbar::-webkit-scrollbar{height:0}
     .sec-tab{padding:8px 14px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:none;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
     .sec-tab.active{color:var(--blue2);border-color:var(--blue2)}
 
-    /* === STABILIZED LAYOUT === */
     .qwrap{
       flex:1;
       overflow-y: auto;
@@ -107,7 +99,6 @@
       width: 100%;
     }
 
-    /* Meta spans both columns */
     .qmeta {
       grid-column: 1 / -1;
       width:100%;
@@ -120,7 +111,6 @@
     .qnum-lbl{font-size:15px;font-weight:700;color:var(--navy)}
     .qmarks-lbl{font-size:13px;color:var(--gray);font-weight:500}
 
-    /* Left column: image panel – fixed 501px width */
     .q-left-col {
       width: 501px;
       grid-column: 1;
@@ -128,18 +118,16 @@
       max-width: 100%;
     }
 
-    /* Right column: options panel */
     .q-right-col {
       width: 100%;
       grid-column: 2;
       align-self: start;
     }
 
-    /* Image panel */
     .qimg-panel{width:100%;background:transparent;border:none;padding:0;}
     .qimg-box{
       width:100%;background:transparent;display:block;
-      min-height:200px; /* Prevents collapse while image loads */
+      min-height:200px;
     }
     .qimg-box img{
       width:100%;height:auto;display:block;max-width:100%;max-height:70vh;object-fit:contain;border-radius:0;box-shadow:none;
@@ -149,7 +137,6 @@
     }
     .img-msg, .img-err{font-size:14px;color:var(--gray);text-align:left;padding:12px 0;background:transparent;}
 
-    /* Options panel */
     .opt-panel{
       background:#fff;border-radius:14px;border:none;padding:20px 16px;width:100%;
     }
@@ -175,7 +162,6 @@
     }
     .opt-btn.sel .opt-lbl-txt{color:var(--blue2);font-weight:700}
 
-    /* Action bar */
     .abar{border-top:1px solid var(--border);background:#fafafa;padding:10px 20px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
     .bgrp{display:flex;gap:8px}
     .bact{padding:8px 16px;border-radius:7px;font-size:13px;font-weight:600;font-family:inherit;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:all .15s}
@@ -185,7 +171,6 @@
     .bsave{background:var(--blue2);color:#fff;border-color:var(--blue2);padding:8px 22px}
     .bsave:hover{background:var(--blue)}
 
-    /* Nav bar */
     .navbar{
       border-top:1px solid var(--border);background:#fff;padding:10px 20px;flex-shrink:0;
       display:flex;align-items:center;justify-content:space-between;
@@ -198,7 +183,6 @@
     .bsubmit{padding:10px 24px;background:var(--green);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:background .2s}
     .bsubmit:hover{background:#15803d}
 
-    /* Sidebar */
     .qsidebar{background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:0}
     .sb-usr{background:var(--navy);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
     .sb-av{width:38px;height:38px;background:var(--blue2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
@@ -223,7 +207,6 @@
     .sum-lbl{font-size:9.5px;text-transform:uppercase;color:var(--gray);letter-spacing:.3px}
     .s-ans{color:var(--green)}.s-na{color:var(--red)}.s-mrk{color:var(--purple)}.s-nv{color:var(--gray)}
 
-    /* Mobile Palette Modal (Bottom Sheet) */
     #mobilePaletteModal{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.5);align-items:flex-end;justify-content:center;}
     #mobilePaletteModal.show{display:flex;}
     .mobile-palette-sheet{background:#fff;width:100%;max-height:80vh;border-radius:20px 20px 0 0;padding:20px 16px;overflow-y:auto;box-shadow:0 -4px 20px rgba(0,0,0,0.2);}
@@ -233,11 +216,14 @@
     .mobile-legend{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
     .mobile-pal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
     .mobile-summary{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;background:var(--light);border-radius:12px;padding:16px;margin-top:8px;}
-    /* Floating palette button (mobile only) */
-    .floating-palette-btn{display:none;position:fixed;bottom:90px;right:20px;z-index:100;width:52px;height:52px;border-radius:26px;background:var(--blue2);color:#fff;border:none;box-shadow:0 6px 16px rgba(37,99,235,0.4);font-size:22px;font-weight:700;cursor:pointer;align-items:center;justify-content:center;}
+    .floating-palette-btn{
+      display:none;position:fixed;bottom:16px;right:16px;z-index:99;
+      width:52px;height:52px;border-radius:26px;background:var(--blue2);color:#fff;
+      border:none;box-shadow:0 6px 16px rgba(37,99,235,0.4);font-size:22px;
+      font-weight:700;cursor:pointer;align-items:center;justify-content:center;
+    }
     .floating-palette-btn.show{display:flex;}
 
-    /* Result screen */
     #resscreen{display:none;position:fixed;inset:0;z-index:150;flex-direction:column;background:var(--navy);overflow-y:auto}
     #resscreen.show{display:flex}
     .rh{background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
@@ -272,13 +258,11 @@
     .rqfoot{padding:0 20px 16px}
     .rqai{max-width:100%;border-radius:6px;border:1px solid var(--border);margin-top:8px}
 
-    /* 1130px = 308px sidebar + 501px q-col + 300px opt-col + gaps — switch columns before overflow */
     @media (max-width: 1130px) {
       .qbody { grid-template-columns: 1fr 280px; }
       .qwrap { grid-template-columns: 400px minmax(250px, 1fr); }
       .q-left-col { width: 400px; }
     }
-    /* 960px = 280px sidebar + 400px q-col + 250px opt-col + gaps — stack vertically to prevent overflow */
     @media (max-width: 960px) {
       .qbody { grid-template-columns: 1fr 260px; }
       .qwrap {
@@ -290,6 +274,11 @@
       }
       .qmeta { grid-column: unset; }
       .q-left-col, .q-right-col { width: 100%; max-width: 100%; grid-column: unset; }
+    }
+    @media (min-width: 801px) and (max-width: 960px) {
+      .qbody { grid-template-columns: 1fr 240px; }
+      .navbar { padding: 8px 12px; }
+      .navlbl { display: none; }
     }
     @media (max-width: 800px) {
       .qbody { grid-template-columns: 1fr; }
@@ -307,6 +296,7 @@
         flex-direction: column;
         min-height: 0;
         overflow: hidden;
+        padding-bottom: 80px;   /* Make room for floating button */
       }
       .secbar {
         position: sticky;
@@ -327,7 +317,15 @@
       .qimg-box { min-height: 40px; }
       .qimg-box img { min-height: 40px; }
       .abar { flex-shrink: 0; }
-      .navbar { flex-shrink: 0; }
+      .navbar {
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        margin-top: 8px;
+        z-index: 10;
+      }
       .qmeta { display: flex; width: 100%; }
       .q-left-col, .q-right-col { width: 100%; max-width: 100%; }
       .opt-panel { padding: 16px 12px; }
@@ -355,26 +353,17 @@
       .navlbl { display: none; }
     }
 
-    /* Optional: Hide nav label on tablets to reduce wrapping */
-    @media (min-width: 801px) and (max-width: 960px) {
-      .navlbl { display: none; }
-    }
-
-    /* --- Security & Anti-Copy Measures --- */
     .qnum-lbl, .qmarks-lbl, .opt-lbl-txt, .navlbl, .tb-test, .tb-user {
       user-select: none;
       -webkit-user-select: none;
     }
-    .qimg-box {
-      position: relative;
-    }
+    .qimg-box { position: relative; }
     .qimg-box img {
       pointer-events: none;
       -webkit-touch-callout: none;
       transform: translateZ(0);
       will-change: transform;
     }
-    /* Desktop-only transparent overlay (blocks right-click / long-press save) */
     .qimg-box::after {
       content: '';
       position: absolute;
@@ -389,7 +378,7 @@
   </style>
 </head>
 <body>
-<!-- Loader, modals, error, result, shell same as before -->
+<!-- Loader, modals, error, result, shell - unchanged -->
 <div id="loader" class="overlay show" style="flex-direction:column">
   <div><div class="spin"></div><h2>Loading Test Environment</h2><p id="loaderMsg">Verifying session…</p></div>
 </div>
@@ -434,7 +423,6 @@
   <button class="btn-err" onclick="location.href='index.html'">← Back to Dashboard</button>
 </div>
 
-<!-- Mobile Palette Modal -->
 <div id="mobilePaletteModal" onclick="if(event.target===this) closeMobilePalette()">
   <div class="mobile-palette-sheet">
     <h3>Question Palette <button class="close-palette" onclick="closeMobilePalette()">&times;</button></h3>
@@ -446,7 +434,6 @@
   </div>
 </div>
 
-<!-- Floating palette button (mobile) -->
 <button class="floating-palette-btn" id="floatingPaletteBtn" onclick="openMobilePalette()" title="Question Palette">📋</button>
 
 <div id="resscreen">
@@ -523,7 +510,7 @@
       <div class="navbar">
         <button class="bnav" id="prevBtn" onclick="navPrev()">◀ Prev</button>
         <span class="navlbl" id="navlbl">Q 1 / —</span>
-        <div style="display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end;">
+        <div class="nav-actions" style="display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; margin-left: auto;">
           <button class="bnav" id="nextBtn" onclick="navNext()">Next ▶</button>
           <button class="bsubmit" onclick="showSubmitModal()">Submit Test</button>
         </div>
@@ -558,545 +545,171 @@
 
 <script>
 'use strict';
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
 const QUIZ_ENGINE_URL = "https://script.google.com/macros/s/AKfycbxvSdwF9f5LK3VbvtqAs3Ku1EjuM92truhxXEnMRQLOSYs8voP_1fP0_ctp4lF1azqiKg/exec";
 const DURATION_SEC = 7200;
 const SHOW_SECTIONS = true;
-
-const LS_SAVE_MS    = 30_000;
-const CLOUD_SYNC_MS = 300_000;
+const LS_SAVE_MS = 30000;
+const CLOUD_SYNC_MS = 300000;
 
 const S = {
-  email:'', name:'',
-  productId:'', testNumber:1, testName:'',
-  questions:[],
-  answers:{}, marks:{}, visited:{},
-  currentQ:0,
-  startTs:0,
-  prevElapsed:0,
-  submitted:false,
-  sessionKey:'',
-  handles:{ timer:null, ls:null, cloud:null },
-  reviewMode: false,
-  preloadCache: new Map(),
-  submissionRetryCount: 0,
+  email:'', name:'', productId:'', testNumber:1, testName:'', questions:[],
+  answers:{}, marks:{}, visited:{}, currentQ:0, startTs:0, prevElapsed:0,
+  submitted:false, sessionKey:'', handles:{}, reviewMode:false, preloadCache:new Map()
 };
 
-// Mobile palette functions
-function openMobilePalette() {
-  buildMobilePaletteContent();
-  el('mobilePaletteModal').classList.add('show');
-}
-function closeMobilePalette() {
-  el('mobilePaletteModal').classList.remove('show');
-}
-function buildMobilePaletteContent() {
-  // Legend
-  const legend = el('mobileLegend');
-  legend.innerHTML = `
-    <div class="leg-row"><div class="leg-dot ld-nv">—</div>Not Visited</div>
-    <div class="leg-row"><div class="leg-dot ld-na">✕</div>Not Answered</div>
-    <div class="leg-row"><div class="leg-dot ld-ans">✓</div>Answered</div>
-    <div class="leg-row"><div class="leg-dot ld-mrk">★</div>Marked</div>
-    <div class="leg-row" style="grid-column:span 2"><div class="leg-dot ld-ma">★</div>Answered+Marked</div>
-  `;
-  // Palette grid
-  const grid = el('mobilePalGrid');
-  grid.innerHTML = '';
-  S.questions.forEach((_, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = i+1;
-    btn.className = 'pal-btn';
-    const vis = S.visited[i], ans = S.answers[i], mrk = S.marks[i];
-    let c = 'pal-btn ';
-    if(!vis) c+='st-nv';
-    else if(mrk&&ans) c+='st-ma';
-    else if(mrk) c+='st-mrk';
-    else if(ans) c+='st-ans';
-    else c+='st-na';
-    if(i===S.currentQ) c+=' current';
-    btn.className = c;
-    btn.onclick = () => { goTo(i); closeMobilePalette(); };
-    grid.appendChild(btn);
-  });
-  // Summary
-  const ans = Object.keys(S.answers).length;
-  const mrk = Object.keys(S.marks).length;
-  const nv = S.questions.filter((_,i)=>!S.visited[i]).length;
-  el('mobileSummary').innerHTML = `
-    <div class="sum-cell"><div class="sum-val s-ans">${ans}</div><div class="sum-lbl">Ans</div></div>
-    <div class="sum-cell"><div class="sum-val s-na">${S.questions.length-ans}</div><div class="sum-lbl">Not Ans</div></div>
-    <div class="sum-cell"><div class="sum-val s-mrk">${mrk}</div><div class="sum-lbl">Marked</div></div>
-    <div class="sum-cell"><div class="sum-val s-nv">${nv}</div><div class="sum-lbl">Not Visited</div></div>
-  `;
-}
-
-window.addEventListener('DOMContentLoaded', async () => {
-  setLoader('Verifying session…');
-  S.email = (localStorage.getItem('aarambh_user_email')||'').toLowerCase().trim();
-  S.name  =  localStorage.getItem('aarambh_user_name') || '';
-  if (!S.email) {
-    showErr('Not Logged In','Please log in from the Aarambh UPSC dashboard to access this test.');
-    return;
-  }
-
-  const p = new URLSearchParams(location.search);
-  S.productId  = p.get('productId') || '';
-  S.testNumber = parseInt(p.get('testNumber')||'1', 10);
-  S.testName   = decodeURIComponent(p.get('testName')||`Test ${S.testNumber}`);
-  const mode          = p.get('mode') || 'quiz';
-  S.reviewMode        = (mode === 'review');
-  const reviewAnswers = p.get('answersJSON') || '{}';
-  if (!S.productId) {
-    showErr('Invalid Link','This quiz URL is missing productId.');
-    return;
-  }
-
-  S.sessionKey = `aarambh_sess_${S.productId}_${S.testNumber}_${btoa(S.email).replace(/=/g,'')}`;
-  applyUserUI();
-  setLoader('Fetching questions…');
-  if (!await fetchQs()) return;
-  hideLoader();
-
-  if (S.reviewMode) {
-    try {
-      const parsed = JSON.parse(decodeURIComponent(reviewAnswers));
-      S.answers = {};
-      Object.keys(parsed).forEach(k => { S.answers[parseInt(k, 10)] = parsed[k]; });
-    } catch(e) { S.answers = {}; }
-    let correct=0, wrong=0, skip=0;
-    S.questions.forEach((q,i) => {
-      const ua = S.answers[i];
-      if (!ua) skip++; else if (ua === q.correct) correct++; else wrong++;
-    });
-    const raw   = correct*2 - wrong*(2/3);
-    const score = Math.round(Math.max(0,raw)*100)/100;
-    const maxM  = S.questions.length * 2;
-    showResult({score, maxM, correct, wrong, skip, elapsed:-1});
-    buildReview();
-    el('reviewContainer').style.display = 'block';
-  } else {
-    const saved = loadSess();
-    if (saved && !saved.submitted && saved.email === S.email) {
-      showResumeModal(saved);
-    } else {
-      initFresh();
-      beginQuiz();
-    }
-  }
-
-  // Resize handler for floating palette button
-  window.addEventListener('resize', () => {
-    const btn = el('floatingPaletteBtn');
-    if (window.innerWidth <= 800) {
-      btn.classList.add('show');
-    } else {
-      btn.classList.remove('show');
-      closeMobilePalette();
-    }
-  });
-
-  // ---------- Security: Disable right-click & image drag ----------
-  document.addEventListener('contextmenu', (e) => {
-    if (e.target.matches('input, textarea, [contenteditable="true"]')) {
-      return true;
-    }
-    e.preventDefault();
-    return false;
-  });
-
-  document.addEventListener('dragstart', (e) => {
-    if (e.target.tagName === 'IMG') {
-      e.preventDefault();
-      return false;
-    }
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-      (e.ctrlKey && e.key === 'U')
-    ) {
-      e.preventDefault();
-      return false;
-    }
-  });
-});
-
-async function fetchQs() {
-  try {
-    const r = await fetch(`${QUIZ_ENGINE_URL}?productId=${encodeURIComponent(S.productId)}&testNumber=${S.testNumber}`);
-    const d = await r.json();
-    if (d.status !== 'success') { showErr('Test Not Found', d.message || 'Quiz Engine error.'); return false; }
-    S.questions = (d.questions||[]).filter(q => q.correct && q.questionImg);
-    if (!S.questions.length) { showErr('No Questions','This test has no questions.'); return false; }
-    preloadAdjacent(0);
-    return true;
-  } catch(e) { showErr('Network Error','Could not load questions.'); return false; }
-}
-
-function saveSess() {
-  const sess = {
-    v:3, email:S.email, productId:S.productId, testNumber:S.testNumber, testName:S.testName,
-    startTs:S.startTs, prevElapsed:calcElapsed(),
-    answers:S.answers, marks:S.marks, visited:S.visited,
-    currentQ:S.currentQ, submitted:S.submitted, lastSaved:Date.now()
-  };
-  try { localStorage.setItem(S.sessionKey, JSON.stringify(sess)); setSyncDot('saved'); } catch(e) {}
-}
-function loadSess() {
-  try { const r=localStorage.getItem(S.sessionKey); return r?JSON.parse(r):null; } catch{ return null; }
-}
-function clearSess() { localStorage.removeItem(S.sessionKey); }
-function calcElapsed() {
-  const cur = S.startTs > 0 ? Math.floor((Date.now()-S.startTs)/1000) : 0;
-  return (S.prevElapsed||0) + cur;
-}
-function getLeft() { return Math.max(0, DURATION_SEC - calcElapsed()); }
-
-function initFresh() {
-  S.answers={}; S.marks={}; S.visited={0:true}; S.currentQ=0;
-  S.prevElapsed=0; S.startTs=Date.now(); S.submitted=false;
-}
-function initResume(saved) {
-  S.answers=saved.answers||{}; S.marks=saved.marks||{}; S.visited=saved.visited||{};
-  S.currentQ=saved.currentQ||0;
-  S.prevElapsed=saved.prevElapsed||0;
-  S.startTs=Date.now(); S.submitted=false;
-}
-function showResumeModal(saved) {
-  const ans  = Object.keys(saved.answers||{}).length;
-  const left = Math.max(0, DURATION_SEC-(saved.prevElapsed||0));
-  const ago  = saved.lastSaved ? relTime(saved.lastSaved) : '—';
-  const mm=String(Math.floor(left/60)).padStart(2,'0'), ss=String(left%60).padStart(2,'0');
-  el('rm-ans').textContent=ans; el('rm-time').textContent=`${mm}:${ss}`; el('rm-saved').textContent=ago;
-  el('resumeModal').classList.add('show');
-}
-function resumeSession() {
-  el('resumeModal').classList.remove('show');
-  initResume(loadSess());
-  beginQuiz();
-}
-function startFresh() {
-  el('resumeModal').classList.remove('show');
-  clearSess(); initFresh(); beginQuiz();
-}
-function relTime(ts) {
-  const s=Math.floor((Date.now()-ts)/1000);
-  if(s<60) return `${s}s ago`; if(s<3600) return `${Math.floor(s/60)}m ago`; return `${Math.floor(s/3600)}h ago`;
-}
-
-function beginQuiz() {
-  buildSections(); buildPalette(); renderQ(S.currentQ);
-  startTimer(); startLS(); startCloud();
-  if (window.innerWidth <= 800) {
-    el('floatingPaletteBtn').classList.add('show');
-  }
-}
-function startTimer() {
-  clearInterval(S.handles.timer);
-  updateTimer();
-  S.handles.timer = setInterval(()=>{ updateTimer(); if(getLeft()<=0){ clearInterval(S.handles.timer); doFinalSubmit(true); }}, 1000);
-}
-function updateTimer() {
-  const l=getLeft(), mm=String(Math.floor(l/60)).padStart(2,'0'), ss=String(l%60).padStart(2,'0');
-  const t=el('timerEl'); t.textContent=`${mm}:${ss}`;
-  t.className='timer'+(l<=300?' danger':l<=900?' warn':'');
-}
-function startLS() {
-  clearInterval(S.handles.ls);
-  S.handles.ls = setInterval(()=>{ setSyncDot('saving'); saveSess(); }, LS_SAVE_MS);
-}
-function startCloud() {
-  clearInterval(S.handles.cloud);
-  S.handles.cloud = setInterval(async ()=>{
-    try {
-      await fetch(QUIZ_ENGINE_URL, {
-        method:'POST', headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({
-          action:'saveProgress', email:S.email,
-          productId:S.productId, testNumber:S.testNumber,
-          answersJSON:JSON.stringify(S.answers),
-          secondsLeft:getLeft(), answeredCount:Object.keys(S.answers).length
-        })
-      });
-    } catch(e){}
-  }, CLOUD_SYNC_MS);
-}
-function setSyncDot(st) {
-  const d=el('syncDot'); d.className='sync-dot '+st;
-  if(st==='saved') setTimeout(()=>{ d.className='sync-dot'; },2500);
-}
-
-function buildSections() {
-  const bar=el('secbar');
-  if (!SHOW_SECTIONS) { bar.style.display='none'; return; }
-  const subs=[...new Set(S.questions.map(q=>q.subject).filter(Boolean))];
-  if(subs.length<=1){bar.style.display='none';return;}
-  bar.style.display='flex';
-  bar.innerHTML=subs.map(s=>`<button class="sec-tab" data-s="${esc(s)}" onclick="jumpSub('${esc(s)}')">${esc(s)}</button>`).join('');
-}
-function updSecTabs() {
-  if (!SHOW_SECTIONS) return;
-  const cur=S.questions[S.currentQ]?.subject;
-  document.querySelectorAll('.sec-tab').forEach(t=>t.classList.toggle('active',t.dataset.s===cur));
-}
-function jumpSub(sub) {
-  const i=S.questions.findIndex(q=>q.subject===sub); if(i>-1) goTo(i);
-}
-
-function preloadAdjacent(idx) {
-  const urls = [];
-  if (idx > 0) urls.push(S.questions[idx-1]?.questionImg);
-  urls.push(S.questions[idx]?.questionImg);
-  if (idx < S.questions.length-1) urls.push(S.questions[idx+1]?.questionImg);
-  urls.filter(u=>u).forEach(url => {
-    if (!S.preloadCache.has(url)) {
-      const img = new Image();
-      img.src = url;
-      S.preloadCache.set(url, img);
-    }
-  });
-}
-
-function renderQ(idx) {
-  S.currentQ=idx; S.visited[idx]=true;
-  const q=S.questions[idx], n=S.questions.length;
-  el('qnumLbl').textContent=`Question ${idx+1} of ${n}`;
-  el('navlbl').textContent=`Q ${idx+1} / ${n}`;
-  el('prevBtn').disabled=idx===0;
-  el('nextBtn').disabled=idx===n-1;
-
-  preloadAdjacent(idx);
-
-  const box=el('qimgBox');
-  box.innerHTML = '<span class="img-msg">Loading…</span>';
-  if(q.questionImg){
-    const cached = S.preloadCache.get(q.questionImg);
-    const useImg = cached && cached.complete ? cached : new Image();
-    const setImg = () => {
-      if (idx !== S.currentQ) return;
-      box.innerHTML = '';
-      const i = document.createElement('img');
-      i.src = q.questionImg;
-      i.alt = `Q${idx+1}`;
-      box.appendChild(i);
-    };
-    const handleError = () => {
-      if (idx !== S.currentQ) return;
-      box.innerHTML='<span class="img-err">⚠ Image failed to load.</span>';
-    };
-    if (useImg.complete) {
-      setImg();
-    } else {
-      useImg.onload = setImg;
-      useImg.onerror = handleError;
-      if (!cached) {
-        useImg.src = q.questionImg;
-        S.preloadCache.set(q.questionImg, useImg);
-      }
-    }
-  } else {
-    box.innerHTML='<span class="img-err">No image for this question.</span>';
-  }
-
-  const grid=el('optgrid'); grid.innerHTML='';
-  ['A','B','C','D'].forEach(k=>{
-    const sel=S.answers[idx]===k;
-    const d=document.createElement('div');
-    d.className='opt-btn'+(sel?' sel':'');
-    d.innerHTML=`<input type="radio" name="opt" value="${k}"${sel?' checked':''}><div class="opt-circle">${k}</div><span class="opt-lbl-txt">Option ${k}</span>`;
-    d.addEventListener('click',()=>selectAns(idx,k));
-    grid.appendChild(d);
-  });
-
-  el('markBtn').classList.toggle('active',!!S.marks[idx]);
-  updPalette(); updSummary(); updSecTabs();
-
-  if (el('mobilePaletteModal').classList.contains('show')) {
-    buildMobilePaletteContent();
-  }
-}
-
-function selectAns(idx,key){ S.answers[idx]=key; renderQ(idx); saveSess(); }
-function clearAnswer(){ delete S.answers[S.currentQ]; renderQ(S.currentQ); saveSess(); }
-function toggleMark(){
-  const i=S.currentQ; S.marks[i]=!S.marks[i]; if(!S.marks[i]) delete S.marks[i];
-  el('markBtn').classList.toggle('active',!!S.marks[i]); updPalette(); saveSess();
-}
-function saveAndNext(){
-  delete S.marks[S.currentQ]; saveSess();
-  const nx=S.currentQ+1; if(nx<S.questions.length) goTo(nx); else updPalette();
-}
-function navPrev(){ if(S.currentQ>0) goTo(S.currentQ-1); }
-function navNext(){ if(S.currentQ<S.questions.length-1) goTo(S.currentQ+1); }
-function goTo(i){ S.visited[i]=true; renderQ(i); const qw=el('qwrap'); if(qw) qw.scrollTop=0; }
-
-function buildPalette(){
-  const g=el('palGrid'); g.innerHTML='';
+function openMobilePalette(){ buildMobilePaletteContent(); el('mobilePaletteModal').classList.add('show'); }
+function closeMobilePalette(){ el('mobilePaletteModal').classList.remove('show'); }
+function buildMobilePaletteContent(){
+  el('mobileLegend').innerHTML = `<div class="leg-row"><div class="leg-dot ld-nv">—</div>Not Visited</div><div class="leg-row"><div class="leg-dot ld-na">✕</div>Not Answered</div><div class="leg-row"><div class="leg-dot ld-ans">✓</div>Answered</div><div class="leg-row"><div class="leg-dot ld-mrk">★</div>Marked</div><div class="leg-row" style="grid-column:span 2"><div class="leg-dot ld-ma">★</div>Answered+Marked</div>`;
+  const grid=el('mobilePalGrid'); grid.innerHTML='';
   S.questions.forEach((_,i)=>{
-    const b=document.createElement('button');
-    b.id=`pb${i}`; b.textContent=i+1; b.className='pal-btn';
-    b.onclick=()=>goTo(i); g.appendChild(b);
-  });
-}
-function updPalette(){
-  S.questions.forEach((_,i)=>{
-    const b=el(`pb${i}`); if(!b) return;
+    const btn=document.createElement('button'); btn.textContent=i+1; btn.className='pal-btn';
     const vis=S.visited[i], ans=S.answers[i], mrk=S.marks[i];
     let c='pal-btn ';
-    if(!vis)           c+='st-nv';
-    else if(mrk&&ans)  c+='st-ma';
-    else if(mrk)       c+='st-mrk';
-    else if(ans)       c+='st-ans';
-    else               c+='st-na';
+    if(!vis) c+='st-nv'; else if(mrk&&ans) c+='st-ma'; else if(mrk) c+='st-mrk'; else if(ans) c+='st-ans'; else c+='st-na';
     if(i===S.currentQ) c+=' current';
-    b.className=c;
+    btn.className=c; btn.onclick=()=>{ goTo(i); closeMobilePalette(); }; grid.appendChild(btn);
   });
+  const ans=Object.keys(S.answers).length, mrk=Object.keys(S.marks).length, nv=S.questions.filter((_,i)=>!S.visited[i]).length;
+  el('mobileSummary').innerHTML=`<div class="sum-cell"><div class="sum-val s-ans">${ans}</div><div class="sum-lbl">Ans</div></div><div class="sum-cell"><div class="sum-val s-na">${S.questions.length-ans}</div><div class="sum-lbl">Not Ans</div></div><div class="sum-cell"><div class="sum-val s-mrk">${mrk}</div><div class="sum-lbl">Marked</div></div><div class="sum-cell"><div class="sum-val s-nv">${nv}</div><div class="sum-lbl">Not Visited</div></div>`;
 }
-function updSummary(){
-  const n=S.questions.length;
-  const ans=Object.keys(S.answers).length, mrk=Object.keys(S.marks).length;
-  const nv=S.questions.filter((_,i)=>!S.visited[i]).length;
-  el('sumAns').textContent=ans; el('sumNa').textContent=n-ans;
-  el('sumMrk').textContent=mrk; el('sumNv').textContent=nv;
+window.addEventListener('DOMContentLoaded', async ()=>{
+  setLoader('Verifying session…');
+  S.email = (localStorage.getItem('aarambh_user_email')||'').toLowerCase().trim();
+  S.name  = localStorage.getItem('aarambh_user_name') || '';
+  if(!S.email){ showErr('Not Logged In','Please log in from dashboard.'); return; }
+  const p = new URLSearchParams(location.search);
+  S.productId = p.get('productId')||''; S.testNumber = parseInt(p.get('testNumber')||'1',10);
+  S.testName = decodeURIComponent(p.get('testName')||`Test ${S.testNumber}`);
+  const mode = p.get('mode')||'quiz'; S.reviewMode = (mode==='review');
+  if(!S.productId){ showErr('Invalid Link','Missing productId.'); return; }
+  S.sessionKey = `aarambh_sess_${S.productId}_${S.testNumber}_${btoa(S.email).replace(/=/g,'')}`;
+  applyUserUI(); setLoader('Fetching questions…');
+  if(!await fetchQs()) return; hideLoader();
+  if(S.reviewMode){
+    try{
+      const parsed=JSON.parse(decodeURIComponent(p.get('answersJSON')||'{}'));
+      S.answers={}; Object.keys(parsed).forEach(k=>{ S.answers[parseInt(k,10)]=parsed[k]; });
+    }catch(e){ S.answers={}; }
+    let correct=0,wrong=0,skip=0;
+    S.questions.forEach((q,i)=>{ const ua=S.answers[i]; if(!ua) skip++; else if(ua===q.correct) correct++; else wrong++; });
+    const raw=correct*2 - wrong*(2/3); const score=Math.round(Math.max(0,raw)*100)/100;
+    showResult({score, maxM:S.questions.length*2, correct, wrong, skip, elapsed:-1});
+    buildReview(); el('reviewContainer').style.display='block';
+  }else{
+    const saved=loadSess();
+    if(saved && !saved.submitted && saved.email===S.email){ showResumeModal(saved); }
+    else{ initFresh(); beginQuiz(); }
+  }
+  window.addEventListener('resize',()=>{ el('floatingPaletteBtn').classList.toggle('show', window.innerWidth<=800); if(window.innerWidth>800) closeMobilePalette(); });
+  document.addEventListener('contextmenu',e=>{ if(!e.target.matches('input,textarea,[contenteditable="true"]')) e.preventDefault(); });
+  document.addEventListener('dragstart',e=>{ if(e.target.tagName==='IMG') e.preventDefault(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'))||(e.ctrlKey&&e.key==='U')) e.preventDefault(); });
+});
+async function fetchQs(){
+  try{
+    const r=await fetch(`${QUIZ_ENGINE_URL}?productId=${encodeURIComponent(S.productId)}&testNumber=${S.testNumber}`);
+    const d=await r.json(); if(d.status!=='success'){ showErr('Test Not Found',d.message); return false; }
+    S.questions=(d.questions||[]).filter(q=>q.correct&&q.questionImg);
+    if(!S.questions.length){ showErr('No Questions','This test has no questions.'); return false; }
+    preloadAdjacent(0); return true;
+  }catch(e){ showErr('Network Error','Could not load questions.'); return false; }
 }
-
-function showSubmitModal(){
-  const n=S.questions.length, ans=Object.keys(S.answers).length, mrk=Object.keys(S.marks).length;
-  el('sm-ans').textContent=ans; el('sm-na').textContent=n-ans; el('sm-mrk').textContent=mrk;
-  el('submitModal').classList.add('show');
+function saveSess(){
+  const sess={v:3,email:S.email,productId:S.productId,testNumber:S.testNumber,testName:S.testName,startTs:S.startTs,prevElapsed:calcElapsed(),answers:S.answers,marks:S.marks,visited:S.visited,currentQ:S.currentQ,submitted:S.submitted,lastSaved:Date.now()};
+  try{ localStorage.setItem(S.sessionKey,JSON.stringify(sess)); setSyncDot('saved'); }catch(e){}
 }
+function loadSess(){ try{ return JSON.parse(localStorage.getItem(S.sessionKey)); }catch{ return null; } }
+function clearSess(){ localStorage.removeItem(S.sessionKey); }
+function calcElapsed(){ const cur=S.startTs>0?Math.floor((Date.now()-S.startTs)/1000):0; return (S.prevElapsed||0)+cur; }
+function getLeft(){ return Math.max(0, DURATION_SEC-calcElapsed()); }
+function initFresh(){ S.answers={}; S.marks={}; S.visited={0:true}; S.currentQ=0; S.prevElapsed=0; S.startTs=Date.now(); S.submitted=false; }
+function initResume(saved){ S.answers=saved.answers||{}; S.marks=saved.marks||{}; S.visited=saved.visited||{}; S.currentQ=saved.currentQ||0; S.prevElapsed=saved.prevElapsed||0; S.startTs=Date.now(); S.submitted=false; }
+function showResumeModal(saved){
+  const ans=Object.keys(saved.answers||{}).length, left=Math.max(0,DURATION_SEC-(saved.prevElapsed||0));
+  const mm=String(Math.floor(left/60)).padStart(2,'0'), ss=String(left%60).padStart(2,'0');
+  el('rm-ans').textContent=ans; el('rm-time').textContent=`${mm}:${ss}`; el('rm-saved').textContent=saved.lastSaved?relTime(saved.lastSaved):'—';
+  el('resumeModal').classList.add('show');
+}
+function resumeSession(){ el('resumeModal').classList.remove('show'); initResume(loadSess()); beginQuiz(); }
+function startFresh(){ el('resumeModal').classList.remove('show'); clearSess(); initFresh(); beginQuiz(); }
+function relTime(ts){ const s=Math.floor((Date.now()-ts)/1000); if(s<60) return `${s}s ago`; if(s<3600) return `${Math.floor(s/60)}m ago`; return `${Math.floor(s/3600)}h ago`; }
+function beginQuiz(){ buildSections(); buildPalette(); renderQ(S.currentQ); startTimer(); startLS(); startCloud(); if(window.innerWidth<=800) el('floatingPaletteBtn').classList.add('show'); }
+function startTimer(){ clearInterval(S.handles.timer); updateTimer(); S.handles.timer=setInterval(()=>{ updateTimer(); if(getLeft()<=0){ clearInterval(S.handles.timer); doFinalSubmit(true); } },1000); }
+function updateTimer(){ const l=getLeft(), mm=String(Math.floor(l/60)).padStart(2,'0'), ss=String(l%60).padStart(2,'0'); const t=el('timerEl'); t.textContent=`${mm}:${ss}`; t.className='timer'+(l<=300?' danger':l<=900?' warn':''); }
+function startLS(){ clearInterval(S.handles.ls); S.handles.ls=setInterval(()=>{ setSyncDot('saving'); saveSess(); },LS_SAVE_MS); }
+function startCloud(){ clearInterval(S.handles.cloud); S.handles.cloud=setInterval(async()=>{ try{ await fetch(QUIZ_ENGINE_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveProgress',email:S.email,productId:S.productId,testNumber:S.testNumber,answersJSON:JSON.stringify(S.answers),secondsLeft:getLeft(),answeredCount:Object.keys(S.answers).length})}); }catch(e){} },CLOUD_SYNC_MS); }
+function setSyncDot(st){ const d=el('syncDot'); d.className='sync-dot '+st; if(st==='saved') setTimeout(()=>{ d.className='sync-dot'; },2500); }
+function buildSections(){ const bar=el('secbar'); if(!SHOW_SECTIONS){ bar.style.display='none'; return; } const subs=[...new Set(S.questions.map(q=>q.subject).filter(Boolean))]; if(subs.length<=1){ bar.style.display='none'; return; } bar.style.display='flex'; bar.innerHTML=subs.map(s=>`<button class="sec-tab" data-s="${esc(s)}" onclick="jumpSub('${esc(s)}')">${esc(s)}</button>`).join(''); }
+function updSecTabs(){ if(!SHOW_SECTIONS) return; const cur=S.questions[S.currentQ]?.subject; document.querySelectorAll('.sec-tab').forEach(t=>t.classList.toggle('active',t.dataset.s===cur)); }
+function jumpSub(sub){ const i=S.questions.findIndex(q=>q.subject===sub); if(i>-1) goTo(i); }
+function preloadAdjacent(idx){ const urls=[]; if(idx>0) urls.push(S.questions[idx-1]?.questionImg); urls.push(S.questions[idx]?.questionImg); if(idx<S.questions.length-1) urls.push(S.questions[idx+1]?.questionImg); urls.filter(u=>u).forEach(url=>{ if(!S.preloadCache.has(url)){ const img=new Image(); img.src=url; S.preloadCache.set(url,img); } }); }
+function renderQ(idx){
+  S.currentQ=idx; S.visited[idx]=true; const q=S.questions[idx], n=S.questions.length;
+  el('qnumLbl').textContent=`Question ${idx+1} of ${n}`; el('navlbl').textContent=`Q ${idx+1} / ${n}`;
+  el('prevBtn').disabled=idx===0; el('nextBtn').disabled=idx===n-1;
+  preloadAdjacent(idx);
+  const box=el('qimgBox'); box.innerHTML='<span class="img-msg">Loading…</span>';
+  if(q.questionImg){
+    const cached=S.preloadCache.get(q.questionImg), useImg=cached?.complete?cached:new Image();
+    const setImg=()=>{ if(idx!==S.currentQ) return; box.innerHTML=''; const i=document.createElement('img'); i.src=q.questionImg; i.alt=`Q${idx+1}`; box.appendChild(i); };
+    const handleError=()=>{ if(idx!==S.currentQ) return; box.innerHTML='<span class="img-err">⚠ Image failed to load.</span>'; };
+    if(useImg.complete) setImg(); else{ useImg.onload=setImg; useImg.onerror=handleError; if(!cached){ useImg.src=q.questionImg; S.preloadCache.set(q.questionImg,useImg); } }
+  }else box.innerHTML='<span class="img-err">No image for this question.</span>';
+  const grid=el('optgrid'); grid.innerHTML='';
+  ['A','B','C','D'].forEach(k=>{ const sel=S.answers[idx]===k; const d=document.createElement('div'); d.className='opt-btn'+(sel?' sel':''); d.innerHTML=`<input type="radio" name="opt" value="${k}"${sel?' checked':''}><div class="opt-circle">${k}</div><span class="opt-lbl-txt">Option ${k}</span>`; d.addEventListener('click',()=>selectAns(idx,k)); grid.appendChild(d); });
+  el('markBtn').classList.toggle('active',!!S.marks[idx]); updPalette(); updSummary(); updSecTabs();
+  if(el('mobilePaletteModal').classList.contains('show')) buildMobilePaletteContent();
+}
+function selectAns(idx,key){ S.answers[idx]=key; renderQ(idx); saveSess(); }
+function clearAnswer(){ delete S.answers[S.currentQ]; renderQ(S.currentQ); saveSess(); }
+function toggleMark(){ const i=S.currentQ; S.marks[i]=!S.marks[i]; if(!S.marks[i]) delete S.marks[i]; el('markBtn').classList.toggle('active',!!S.marks[i]); updPalette(); saveSess(); }
+function saveAndNext(){ delete S.marks[S.currentQ]; saveSess(); const nx=S.currentQ+1; if(nx<S.questions.length) goTo(nx); else updPalette(); }
+function navPrev(){ if(S.currentQ>0) goTo(S.currentQ-1); }
+function navNext(){ if(S.currentQ<S.questions.length-1) goTo(S.currentQ+1); }
+function goTo(i){ S.visited[i]=true; renderQ(i); el('qwrap').scrollTop=0; }
+function buildPalette(){ const g=el('palGrid'); g.innerHTML=''; S.questions.forEach((_,i)=>{ const b=document.createElement('button'); b.id=`pb${i}`; b.textContent=i+1; b.className='pal-btn'; b.onclick=()=>goTo(i); g.appendChild(b); }); }
+function updPalette(){ S.questions.forEach((_,i)=>{ const b=el(`pb${i}`); if(!b) return; const vis=S.visited[i], ans=S.answers[i], mrk=S.marks[i]; let c='pal-btn '; if(!vis) c+='st-nv'; else if(mrk&&ans) c+='st-ma'; else if(mrk) c+='st-mrk'; else if(ans) c+='st-ans'; else c+='st-na'; if(i===S.currentQ) c+=' current'; b.className=c; }); }
+function updSummary(){ const n=S.questions.length, ans=Object.keys(S.answers).length, mrk=Object.keys(S.marks).length, nv=S.questions.filter((_,i)=>!S.visited[i]).length; el('sumAns').textContent=ans; el('sumNa').textContent=n-ans; el('sumMrk').textContent=mrk; el('sumNv').textContent=nv; }
+function showSubmitModal(){ el('sm-ans').textContent=Object.keys(S.answers).length; el('sm-na').textContent=S.questions.length-Object.keys(S.answers).length; el('sm-mrk').textContent=Object.keys(S.marks).length; el('submitModal').classList.add('show'); }
 function closeSubmitModal(){ el('submitModal').classList.remove('show'); }
-
 async function doFinalSubmit(auto=false){
-  if(S.submitted) return;
-  S.submitted=true;
-  Object.values(S.handles).forEach(h=>clearInterval(h));
-  el('submitModal').classList.remove('show');
-  const elapsed=calcElapsed();
-  let correct=0, wrong=0, skip=0;
-  S.questions.forEach((q,i)=>{
-    const ua=S.answers[i];
-    if(!ua) skip++; else if(ua===q.correct) correct++; else wrong++;
-  });
-  const raw=correct*2 - wrong*(2/3);
-  const score=Math.round(Math.max(0,raw)*100)/100;
-  const maxM=S.questions.length*2;
-  saveSess();
-  el('loaderMsg').textContent='Submitting results…';
-  el('loader').classList.add('show');
-
-  let success = false;
-  let retries = 0;
-  const maxRetries = 3;
-
-  while (!success && retries < maxRetries) {
-    try {
-      const resp = await fetch(QUIZ_ENGINE_URL,{
-        method:'POST', headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({
-          action:'submitTest', email:S.email,
-          productId:S.productId, testNumber:S.testNumber,
-          testName: S.testName,
-          score, totalQuestions:S.questions.length,
-          timeTaken:`${Math.floor(elapsed/60)}m ${elapsed%60}s`,
-          correct, wrong, skip,
-          answersJSON: JSON.stringify(S.answers)
-        })
-      });
-      const data = await resp.json();
-      if (data.status === 'success') {
-        success = true;
-      } else {
-        throw new Error(data.message || 'Submission rejected');
-      }
-    } catch(e) {
-      retries++;
-      if (retries >= maxRetries) {
-        el('loader').classList.remove('show');
-        S.submitted = false;
-        if (confirm(`⚠️ Submission failed: ${e.message}\n\nYour answers are still saved locally. Would you like to retry?`)) {
-          el('loader').classList.add('show');
-          retries = 0;
-          continue;
-        } else {
-          S.submitted = false;
-          startTimer(); startLS(); startCloud();
-          el('loader').classList.remove('show');
-          return;
-        }
-      }
-      await new Promise(r=>setTimeout(r, 1500 * retries));
-    }
+  if(S.submitted) return; S.submitted=true; Object.values(S.handles).forEach(h=>clearInterval(h)); el('submitModal').classList.remove('show');
+  const elapsed=calcElapsed(); let correct=0,wrong=0,skip=0;
+  S.questions.forEach((q,i)=>{ const ua=S.answers[i]; if(!ua) skip++; else if(ua===q.correct) correct++; else wrong++; });
+  const raw=correct*2 - wrong*(2/3); const score=Math.round(Math.max(0,raw)*100)/100; const maxM=S.questions.length*2;
+  saveSess(); el('loaderMsg').textContent='Submitting results…'; el('loader').classList.add('show');
+  let success=false, retries=0; const maxRetries=3;
+  while(!success && retries<maxRetries){
+    try{
+      const resp=await fetch(QUIZ_ENGINE_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'submitTest',email:S.email,productId:S.productId,testNumber:S.testNumber,testName:S.testName,score,totalQuestions:S.questions.length,timeTaken:`${Math.floor(elapsed/60)}m ${elapsed%60}s`,correct,wrong,skip,answersJSON:JSON.stringify(S.answers)})});
+      const data=await resp.json(); if(data.status==='success') success=true; else throw new Error(data.message||'Submission rejected');
+    }catch(e){ retries++; if(retries>=maxRetries){ el('loader').classList.remove('show'); S.submitted=false; if(confirm(`⚠️ Submission failed: ${e.message}\n\nRetry?`)){ el('loader').classList.add('show'); retries=0; continue; } else{ S.submitted=false; startTimer(); startLS(); startCloud(); el('loader').classList.remove('show'); return; } } await new Promise(r=>setTimeout(r,1500*retries)); }
   }
-
-  el('loader').classList.remove('show');
-  if (success) {
-    clearSess();
-    showResult({score,maxM,correct,wrong,skip,elapsed});
-  } else {
-    S.submitted = false;
-    startTimer(); startLS(); startCloud();
-  }
+  el('loader').classList.remove('show'); if(success){ clearSess(); showResult({score,maxM,correct,wrong,skip,elapsed}); } else{ S.submitted=false; startTimer(); startLS(); startCloud(); }
 }
-
 function showResult({score,maxM,correct,wrong,skip,elapsed}){
-  const pct=maxM>0?Math.round(score/maxM*100):0;
-  const grade=pct>=70?'🏆 Excellent':pct>=50?'✅ Good':pct>=35?'📘 Average':'📖 Needs More Practice';
-  const mm=elapsed>=0 ? String(Math.floor(elapsed/60)).padStart(2,'0') : '—';
-  const ss=elapsed>=0 ? String(elapsed%60).padStart(2,'0') : '';
-  el('resScore').textContent=score; el('resTotal').textContent=`/ ${maxM}`;
-  el('resGrade').textContent=grade; el('resName').textContent=`${S.name} · ${S.testName}`;
-  el('resEmail').textContent=S.email;
-  el('resCorrect').textContent=correct; el('resWrong').textContent=wrong;
-  el('resSkip').textContent=skip; el('resTime').textContent=`${mm}:${ss}`;
-  el('scoreCircle').style.borderColor=pct>=50?'var(--green)':pct>=35?'var(--accent)':'var(--red)';
-  el('resscreen').classList.add('show');
+  const pct=maxM>0?Math.round(score/maxM*100):0, grade=pct>=70?'🏆 Excellent':pct>=50?'✅ Good':pct>=35?'📘 Average':'📖 Needs More Practice';
+  const mm=elapsed>=0?String(Math.floor(elapsed/60)).padStart(2,'0'):'—', ss=elapsed>=0?String(elapsed%60).padStart(2,'0'):'';
+  el('resScore').textContent=score; el('resTotal').textContent=`/ ${maxM}`; el('resGrade').textContent=grade; el('resName').textContent=`${S.name} · ${S.testName}`; el('resEmail').textContent=S.email;
+  el('resCorrect').textContent=correct; el('resWrong').textContent=wrong; el('resSkip').textContent=skip; el('resTime').textContent=`${mm}:${ss}`;
+  el('scoreCircle').style.borderColor=pct>=50?'var(--green)':pct>=35?'var(--accent)':'var(--red)'; el('resscreen').classList.add('show');
 }
-function toggleReview(){
-  const rc=el('reviewContainer');
-  if(rc.style.display==='none'){ buildReview(); rc.style.display='block'; }
-  else rc.style.display='none';
-}
+function toggleReview(){ const rc=el('reviewContainer'); if(rc.style.display==='none'){ buildReview(); rc.style.display='block'; } else rc.style.display='none'; }
 function buildReview(){
   const body=el('reviewBody'); body.innerHTML='';
-  S.questions.forEach((q,i)=>{
-    const ua=S.answers[i], ca=q.correct;
-    let bc='rqb-s', bt='Skipped';
-    if(ua===ca){bc='rqb-c';bt=`Correct (${ua})`;}
-    else if(ua){bc='rqb-w';bt=`Wrong (${ua})`;}
-    const opts=['A','B','C','D'].map(k=>{
-      let c='rqopt'; if(k===ca)c+=' correct'; else if(k===ua&&ua!==ca)c+=' wrong';
-      return `<div class="${c}">${k}</div>`;
-    }).join('');
+  S.questions.forEach((q,i)=>{ const ua=S.answers[i], ca=q.correct; let bc='rqb-s', bt='Skipped'; if(ua===ca){ bc='rqb-c'; bt=`Correct (${ua})`; } else if(ua){ bc='rqb-w'; bt=`Wrong (${ua})`; }
+    const opts=['A','B','C','D'].map(k=>{ let c='rqopt'; if(k===ca) c+=' correct'; else if(k===ua&&ua!==ca) c+=' wrong'; return `<div class="${c}">${k}</div>`; }).join('');
     body.innerHTML+=`<div class="rq"><div class="rqh"><span class="rqn">Q${i+1} · ${esc(q.subject||'GS')}</span><span class="rq-lbl rqb-lbl ${bc}">${bt} · Correct: ${ca}</span></div><div class="rqbody">${q.questionImg?`<img src="${q.questionImg}" class="rqimg" alt="Q${i+1}">`:''}<div class="rq-opts">${opts}</div></div>${q.answerImg?`<div class="rqfoot"><div style="font-size:11px;color:var(--gray);font-weight:700;margin-bottom:6px;text-transform:uppercase">Solution</div><img src="${q.answerImg}" class="rqai" alt="Sol ${i+1}"></div>`:''}</div>`;
   });
 }
-
-function applyUserUI(){
-  const init=(S.name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2))||'A';
-  el('tbName').textContent=S.name; el('tbEmail').textContent=S.email;
-  el('tbTest').textContent=S.testName; el('sbNm').textContent=S.name;
-  el('sbEm').textContent=S.email; el('sbAv').textContent=init;
-}
+function applyUserUI(){ const init=(S.name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2))||'A'; el('tbName').textContent=S.name; el('tbEmail').textContent=S.email; el('tbTest').textContent=S.testName; el('sbNm').textContent=S.name; el('sbEm').textContent=S.email; el('sbAv').textContent=init; }
 function setLoader(msg){ el('loaderMsg').textContent=msg; }
 function hideLoader(){ el('loader').classList.remove('show'); }
 function showErr(t,m){ hideLoader(); el('errTitle').textContent=t; el('errMsg').textContent=m; el('errScreen').classList.add('show'); }
 function el(id){ return document.getElementById(id); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function confirmExit(){
-  if(!S.submitted && S.questions.length>0 && !S.reviewMode){
-    if(confirm('Your progress is auto-saved. Exit to dashboard?')) {
-      saveSess();
-      location.href='index.html';
-    }
-  } else {
-    location.href='index.html';
-  }
-}
+function confirmExit(){ if(!S.submitted && S.questions.length>0 && !S.reviewMode){ if(confirm('Your progress is auto-saved. Exit to dashboard?')){ saveSess(); location.href='index.html'; } } else location.href='index.html'; }
 window.addEventListener('beforeunload',()=>{ if(!S.submitted&&!S.reviewMode&&S.questions.length>0) saveSess(); });
 </script>
 </body>
