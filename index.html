@@ -692,6 +692,14 @@ function renderDashboard(user, attempts) {
   localStorage.setItem('aarambh_user_email', user.userEmail);
   localStorage.setItem('aarambh_user_name', user.userName);
 
+  // ========== ACTIVITY LOGGER INTEGRATION ==========
+  // Activates the zero-impact activity logger with the user's email.
+  // This will automatically log the 'login' event and subsequent page views.
+  if (window.setLoggerUser) {
+    window.setLoggerUser(user.userEmail);
+  }
+  // ================================================
+
   const tierBadge = document.getElementById('dash-tier-badge');
   tierBadge.textContent = user.tier || 'Freemium';
 
@@ -988,6 +996,79 @@ window.addEventListener('beforeunload', function() {
   if (_signInCleanupTimeout) clearTimeout(_signInCleanupTimeout);
 });
 </script>
+
+<!-- =============================================== -->
+<!-- ZERO‑IMPACT ACTIVITY LOGGER                      -->
+<!-- =============================================== -->
+<script>
+(function() {
+  'use strict';
+
+  // CONFIGURATION – Replace with your deployed Apps Script URL
+  const LOGGER_URL = 'https://script.google.com/macros/s/AKfycbw7I98mzV9fPDw4g98nPMHVLXbZPI-pkJsWCTTuUeQ1pvsI-L6dHbOmH4-cRQmuyd6F/exec';
+  
+  // Stores the logged‑in user's email (set after Google login)
+  let currentUserEmail = null;
+
+  // ------------------------------------------------------------
+  // PUBLIC API: Call this after a successful login
+  // Example: window.setLoggerUser('user@gmail.com');
+  // ------------------------------------------------------------
+  window.setLoggerUser = function(email) {
+    if (email && typeof email === 'string') {
+      currentUserEmail = email;
+      // Automatically log the 'login' event
+      window.logUserAction('login');
+    }
+  };
+
+  // ------------------------------------------------------------
+  // PUBLIC API: Log any action (page_view, click, etc.)
+  // Example: window.logUserAction('page_view');
+  //          window.logUserAction('click');
+  // ------------------------------------------------------------
+  window.logUserAction = function(action) {
+    if (!currentUserEmail) return;  // No user logged in – do nothing
+
+    // Build the payload – matches the 6 columns in Google Sheets
+    const payload = {
+      email: currentUserEmail,
+      action: action,
+      page: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      userAgent: navigator.userAgent || ''
+    };
+
+    // Convert to Blob with simple content-type to avoid CORS preflight
+    const blob = new Blob([JSON.stringify(payload)], { type: 'text/plain' });
+    
+    // Use sendBeacon if available – guaranteed non‑blocking, works even on page unload
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(LOGGER_URL, blob);
+    } else {
+      // Fallback: async XHR via setTimeout – still off the critical path
+      setTimeout(function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', LOGGER_URL, true);
+        xhr.setRequestHeader('Content-Type', 'text/plain');
+        xhr.send(blob);
+      }, 0);
+    }
+  };
+
+  // ------------------------------------------------------------
+  // AUTOMATIC PAGE VIEW LOGGING
+  // Fires when the page becomes visible (initial load, back/forward cache)
+  // ------------------------------------------------------------
+  window.addEventListener('pageshow', function() {
+    if (currentUserEmail) {
+      window.logUserAction('page_view');
+    }
+  });
+
+})();
+</script>
+<!-- ========== END ACTIVITY LOGGER ========== -->
 
 </body>
 </html>
