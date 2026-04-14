@@ -1,0 +1,32 @@
+# ── Local environment / secret config ──────────────────────────────────────
+# NEVER commit files that contain real Apps Script URLs, API keys, or tokens.
+# Use GitHub Secrets + the deploy workflow for injection instead.
+.env
+.env.*
+*.local
+config.local.js
+secrets.js
+
+# ── Build artefacts ──────────────────────────────────────────────────────────
+dist/
+build/
+out/
+*.built.html
+
+# ── Node / Python ────────────────────────────────────────────────────────────
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ── OS clutter ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editor metadata ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
