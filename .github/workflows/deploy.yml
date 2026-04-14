@@ -93,10 +93,9 @@ jobs:
           echo "✓ All placeholders replaced successfully."
 
       # ── 4. Safety check: no raw Apps Script URLs in source tree ─────────────
-      # (Catches accidental re-introduction of hardcoded URLs in future commits)
       - name: Verify no raw Apps Script URLs in source
         run: |
-          if git grep -n 'script\.google\.com/macros/s/' -- '*.html' '*.js' '*.ts' 2>/dev/null; then
+          if git grep -n 'script\.google\.com/macros/s/' HEAD -- '*.html' '*.js' '*.ts' 2>/dev/null; then
             echo "❌ ERROR: Raw Apps Script URL found in source files. Use __PLACEHOLDER__ instead."
             exit 1
           fi
