@@ -587,7 +587,9 @@ window.addEventListener('DOMContentLoaded', async ()=>{
   setLoader('Verifying session…');
   S.email = (localStorage.getItem('aarambh_user_email')||'').toLowerCase().trim();
   S.name  = localStorage.getItem('aarambh_user_name') || '';
-  if(!S.email){ showErr('Not Logged In','Please log in from dashboard.'); return; }
+  // FIX: require both identity key AND auth token — prevents post-logout access
+  const _authToken = localStorage.getItem('aarambh_id_token');
+  if(!S.email || !_authToken){ showErr('Not Logged In','Please log in from dashboard.'); return; }
   const p = new URLSearchParams(location.search);
   S.productId = p.get('productId')||''; S.testNumber = parseInt(p.get('testNumber')||'1',10);
   S.testName = decodeURIComponent(p.get('testName')||`Test ${S.testNumber}`);
@@ -721,6 +723,14 @@ function el(id){ return document.getElementById(id); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function confirmExit(){ if(!S.submitted && S.questions.length>0 && !S.reviewMode){ if(confirm('Your progress is auto-saved. Exit to dashboard?')){ saveSess(); location.href='index.html'; } } else location.href='index.html'; }
 window.addEventListener('beforeunload',()=>{ if(!S.submitted&&!S.reviewMode&&S.questions.length>0) saveSess(); });
+// FIX: re-validate auth on bfcache restore (back-button navigation)
+window.addEventListener('pageshow', (e)=>{
+  if(e.persisted){
+    const email=localStorage.getItem('aarambh_user_email');
+    const token=localStorage.getItem('aarambh_id_token');
+    if(!email || !token){ showErr('Session Expired','Your session has ended. Please log in from dashboard.'); }
+  }
+});
 </script>
 </body>
 </html>
