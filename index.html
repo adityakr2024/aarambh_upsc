@@ -371,7 +371,7 @@
                         </div>
                     </div>
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSdkgXG-s3oEzoHkcBLk13LVd1wMKhnH0SjrQXTfgXIaVG7CsA/viewform?usp=header" class="block text-center bg-amber-400 text-slate-900 font-semibold py-3 rounded-xl hover:bg-amber-500 transition-colors">
-                        Get Mini Test Series →
+                        Get Test Series (₹ 199) →
                     </a>
                 </div>
 
@@ -651,6 +651,8 @@
 
         function clearStoredToken() {
             localStorage.removeItem('aarambh_id_token');
+            localStorage.removeItem('aarambh_user_email'); // FIX: clear identity on logout
+            localStorage.removeItem('aarambh_user_name');  // FIX: clear identity on logout
             _idToken = null;
         }
 
